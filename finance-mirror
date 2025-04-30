@@ -1,0 +1,19 @@
+project_name: finance-mirror
+folders:
+  - engine/
+    - bill_parser/
+    - score_tracker/
+  - interface/
+    - cli/
+    - links/
+  - config/
+  - docs/
+files:
+  - README.md
+  - .env
+  - mirror.json
+  - links.csv
+  - help.md
+options:
+  git_init: true
+  license: MIT
