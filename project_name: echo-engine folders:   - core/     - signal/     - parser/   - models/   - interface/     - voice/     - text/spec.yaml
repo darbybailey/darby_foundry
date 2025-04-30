@@ -1,0 +1,17 @@
+project_name: echo-engine
+folders:
+  - core/
+    - signal/
+    - parser/
+  - models/
+  - interface/
+    - voice/
+    - text/
+files:
+  - README.md
+  - .env
+  - help.md
+  - docker-compose.yml
+options:
+  git_init: true
+  license: MIT
