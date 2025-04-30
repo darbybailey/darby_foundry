@@ -1,0 +1,16 @@
+project_name: echo-field-api
+folders:
+  - core/
+    - signal/
+    - parser/
+  - interface/
+    - voice/
+    - text/
+  - models/
+files:
+  - README.md
+  - .env
+  - help.md
+  - docker-compose.yml
+options:
+  git_init: true
