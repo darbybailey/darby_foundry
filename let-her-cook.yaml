@@ -1,0 +1,19 @@
+project_name: let-her-cook
+folders:
+  - tracker/
+    - templates/
+    - data/
+  - interface/
+    - dashboard/
+    - mobile/
+  - logic/
+    - ranking/
+    - scoring/
+files:
+  - README.md
+  - .env
+  - cook.json
+  - help.md
+options:
+  git_init: true
+  license: MIT
