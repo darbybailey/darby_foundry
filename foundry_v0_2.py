@@ -1,95 +1,71 @@
 import os
-import requests
-import base64
 import yaml
+import requests
 
-# === Load secrets from GitHub Actions ===
-GITHUB_TOKEN = os.environ['FOUNDRY_TOKEN_PERSONAL']
-USERNAME = os.environ['FOUNDRY_USERNAME']
-
-if USERNAME != "darbybailey":
-    raise Exception("❌ Unauthorized user. Only darbybailey can run this workflow. Please copy this to your own GitHub account, create your token and username to run in your own account")
-
-
-# === Load the architecture spec ===
+# === 1. Load the correct YAML block from spec.yaml ===
 with open("spec.yaml", "r") as f:
-    config = list(yaml.safe_load_all(f))[0]
+    docs = list(yaml.safe_load_all(f))
+
+# Look for the Foundry config block by checking for 'project_name'
+config = next(
+    (doc for doc in docs if isinstance(doc, dict) and "project_name" in doc),
+    None
+)
+
+if config is None:
+    raise ValueError("No Foundry config found in spec.yaml.")
 
 project_name = config["project_name"]
 folders = config.get("folders", [])
 files = config.get("files", [])
 options = config.get("options", {})
 
-# === Create the new repo via GitHub API ===
-headers = {
-    "Authorization": f"token {GITHUB_TOKEN}",
-    "Accept": "application/vnd.github.v3+json"
-}
-repo_data = {
-    "name": project_name,
-    "private": options.get("visibility", "public") != "public",
-    "auto_init": True
-}
-res = requests.post("https://api.github.com/user/repos", headers=headers, json=repo_data)
-if res.status_code != 201:
-    raise Exception(f"❌ Repo creation failed: {res.text}")
-print(f"✅ Repo created: https://github.com/{USERNAME}/{project_name}")
-
-import shutil
-
-# === Clean up any old run ===
-if os.path.exists(project_name):
-    shutil.rmtree(project_name)
-
-# === Create folders and files locally ===
+# === 2. Create base project folder ===
 os.makedirs(project_name, exist_ok=True)
 os.chdir(project_name)
 
-def create_nested(folder):
-    parts = folder.strip("/").split("/")
-    path = ""
-    for part in parts:
-        path = os.path.join(path, part)
-        os.makedirs(path, exist_ok=True)
+# === 3. Recursively create folders ===
+def create_nested(path):
+    full_path = ""
+    for part in path.strip("/").split("/"):
+        full_path = os.path.join(full_path, part)
+        os.makedirs(full_path, exist_ok=True)
 
 for folder in folders:
     if isinstance(folder, str):
         create_nested(folder)
-    elif isinstance(folder, dict):
-        for root, subs in folder.items():
-            for sub in subs:
-                create_nested(f"{root}/{sub}")
 
+# === 4. Create files ===
 for file in files:
     with open(file, "w") as f:
         f.write("")
 
-# === Push files to new repo ===
-def push_file(path, content, repo):
-    url = f"https://api.github.com/repos/{USERNAME}/{repo}/contents/{path}"
-    encoded = base64.b64encode(content.encode()).decode()
-    data = {
-        "message": f"Add {path}",
-        "content": encoded
+# === 5. Git init (optional) ===
+if options.get("git_init", False):
+    os.system("git init")
+
+# === 6. Create GitHub repo if token and username are available ===
+token = os.environ.get("FOUNDRY_TOKEN_PERSONAL")
+username = os.environ.get("FOUNDRY_USERNAME")
+
+if token and username:
+    url = "https://api.github.com/user/repos"
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github.v3+json"
     }
-    r = requests.put(url, headers=headers, json=data)
-    if r.status_code not in [201, 200]:
-        print(f"⚠️ Failed to push {path}: {r.text}")
+    data = {
+        "name": project_name,
+        "private": options.get("visibility", "public") != "public",
+        "auto_init": False,
+        "license_template": options.get("license", "mit").lower()
+    }
 
-# Walk and push all files
-for root, dirs, files in os.walk("."):
-    for file in files:
-        filepath = os.path.join(root, file)
-        if ".git" in filepath:
-            continue
-        with open(filepath, "r") as f:
-            content = f.read()
-        repo_path = filepath.replace("./", "")
-        push_file(repo_path, content, project_name)
+    res = requests.post(url, headers=headers, json=data)
 
-import shutil
-
-# === Final step: Cleanup the local folder ===
-os.chdir("..")
-shutil.rmtree(project_name)
-print(f"🧹 Cleaned up local project folder: {project_name}")
+    if res.status_code == 201:
+        print(f"✅ Repo created: {res.json().get('html_url')}")
+    else:
+        raise Exception(f"❌ Repo creation failed: {res.text}")
+else:
+    print("⚠️ Skipping GitHub repo creation (missing credentials)")
