@@ -76,3 +76,11 @@ for root, dirs, files in os.walk("."):
             content = f.read()
         repo_path = filepath.replace("./", "")
         push_file(repo_path, content, project_name)
+
+import shutil
+
+# === Final step: Cleanup the local folder ===
+os.chdir("..")
+shutil.rmtree(project_name)
+print(f"🧹 Cleaned up local project folder: {project_name}")
+
