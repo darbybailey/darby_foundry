@@ -35,6 +35,12 @@ if res.status_code != 201:
     raise Exception(f"❌ Repo creation failed: {res.text}")
 print(f"✅ Repo created: https://github.com/{USERNAME}/{project_name}")
 
+import shutil
+
+# === Clean up any old run ===
+if os.path.exists(project_name):
+    shutil.rmtree(project_name)
+
 # === Create folders and files locally ===
 os.makedirs(project_name, exist_ok=True)
 os.chdir(project_name)
