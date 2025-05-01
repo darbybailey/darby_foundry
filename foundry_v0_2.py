@@ -12,8 +12,22 @@ if USERNAME != "darbybailey":
 
 
 # === Load the architecture spec ===
-with open("spec.yaml", "r") as f:
-    config = list(yaml.safe_load_all(f))
+import yaml
+
+with open("spec.yaml") as f:
+    docs = list(yaml.safe_load_all(f))
+
+project_name = None
+for doc in docs:
+    if isinstance(doc, dict) and "project_name" in doc:
+        project_name = doc["project_name"]
+        break
+
+if project_name:
+    print("Found project name:", project_name)
+else:
+    print("No project_name found in spec.yaml.")
+    
 
 project_name = config["project_name"]
 folders = config.get("folders", [])
