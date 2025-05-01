@@ -27,12 +27,8 @@ if project_name:
     print("Found project name:", project_name)
 else:
     print("No project_name found in spec.yaml.")
-    
 
-project_name = config["project_name"]
-folders = config.get("folders", [])
-files = config.get("files", [])
-options = config.get("options", {})
+
 
 # === Create the new repo via GitHub API ===
 headers = {
