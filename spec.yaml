@@ -1,16 +1,17 @@
-project_name: echo-field-api
+project_name: kanban-scribe
 folders:
-  - core/
-    - signal/
-    - parser/
-  - interface/
-    - voice/
-    - text/
-  - models/
+  - google_apps_script/
+  - python_port/
+    - interface/
+    - logic/
+  - examples/
+  - docs/
 files:
   - README.md
-  - .env
+  - kanban_template.gs
+  - kanban_config.json
   - help.md
-  - docker-compose.yml
+  - .env
 options:
   git_init: true
+  license: MIT
