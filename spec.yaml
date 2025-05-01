@@ -1,19 +1,20 @@
-project_name: btc-unlocker
+project_name: let-her-cook
 folders:
-  - core/
-    - wallet_tools/
-    - seed_helpers/
+  - tracker/
+    - data/
+    - models/
+    - logic/
+    - dashboards/
   - interface/
-    - cli/
-    - web/
-  - docs/
-  - tests/
+    - mobile/
+    - browser/
+  - logs/
 files:
   - README.md
   - .env
-  - keys_template.txt
-  - seed_notes_example.md
+  - cook-log.json
+  - cook-schema.yaml
   - help.md
 options:
+  visibility: private
   git_init: true
-  license: MIT
