@@ -1,7 +1,17 @@
 # ====================================
 # Gravel9 TILT System (Mythic Deployment)
 # ====================================
-
+project_name: gravel9-tilt
+folders:
+  - .
+files:
+  - gravel9-tilt-deployment.yaml
+  - README.md
+options:
+  git_init: true
+  license: MIT
+  visibility: public
+---
 # -- 1. Namespace --
 ---
 apiVersion: v1
