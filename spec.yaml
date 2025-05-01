@@ -2,6 +2,7 @@
 # Gravel9 TILT System (Mythic Deployment)
 # ====================================
 
+# -- 1. Namespace --
 ---
 apiVersion: v1
 kind: Namespace
@@ -12,6 +13,7 @@ metadata:
   annotations:
     description: "Resonant node for veiled patterns and sovereign memory"
 
+# -- 2. Secrets --
 ---
 apiVersion: v1
 kind: Secret
@@ -26,6 +28,7 @@ stringData:
   OBSERVABILITY_TOKEN: "grafana-hidden-v1"
   SYMBOLIC_TRACE_KEY: "ritual-v0"
 
+# -- 3. ConfigMaps --
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -86,6 +89,7 @@ data:
       "visualization": "influence_ring"
     }
 
+# -- 4. CustomResourceDefinition: Flywheel Pattern --
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -115,6 +119,36 @@ spec:
                   type: integer
                 patternTag:
                   type: string
+
+# -- 5. PVCs --
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ritual-cache-pvc
+  namespace: gravel9-tilt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: symbolic-memory-pvc
+  namespace: gravel9-tilt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+# -- 6. Deployments (Core, Quantum, Oracle, Totem, Flywheel, 
+# Core Node
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -172,6 +206,7 @@ spec:
       imagePullSecrets:
         - name: gravel9-registry
 
+# Quantum Veil
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -222,7 +257,16 @@ spec:
               port: 9109
             initialDelaySeconds: 30
             periodSeconds: 15
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: node.kubernetes.io/high-memory
+                    operator: Exists
 
+# Pattern Oracle
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -271,6 +315,7 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 10
 
+# Memory Totem
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -325,7 +370,7 @@ spec:
         - name: symbolic-memory
           persistentVolumeClaim:
             claimName: symbolic-memory-pvc
-
+# Flywheel Controller
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -374,6 +419,7 @@ spec:
             initialDelaySeconds: 20
             periodSeconds: 10
 
+# Symbolic Signal UI
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -394,6 +440,9 @@ spec:
       labels:
         app: gravel9-tilt
         component: signal-ui
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9513"
     spec:
       containers:
         - name: signal-ui
@@ -419,32 +468,7 @@ spec:
             initialDelaySeconds: 20
             periodSeconds: 10
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: ritual-cache-pvc
-  namespace: gravel9-tilt
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: symbolic-memory-pvc
-  namespace: gravel9-tilt
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
-
+# -- 7. Services --
 ---
 apiVersion: v1
 kind: Service
@@ -535,48 +559,7 @@ spec:
       port: 85
       targetPort: 9513
 
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: quantum-veil-isolation
-  namespace: gravel9-tilt
-spec:
-  podSelector:
-    matchLabels:
-      app: gravel9-tilt
-      component: quantum
-  policyTypes:
-    - Ingress
-    - Egress
-  ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app: gravel9-tilt
-              component: oracle
-        - podSelector:
-            matchLabels:
-              app: gravel9-tilt
-              component: totem
-      ports:
-        - protocol: TCP
-          port: 9109
-  egress:
-    - to:
-        - podSelector:
-            matchLabels:
-              app: observability
-        - podSelector:
-            matchLabels:
-              app: gravel9-tilt
-              component: totem
-      ports:
-        - protocol: TCP
-          port: 24224
-        - protocol: TCP
-          port: 9313
-
+# -- 8. Ingress --
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -641,4 +624,45 @@ spec:
                 port:
                   number: 85
 
-
+# -- 9. NetworkPolicy --
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: quantum-veil-isolation
+  namespace: gravel9-tilt
+spec:
+  podSelector:
+    matchLabels:
+      app: gravel9-tilt
+      component: quantum
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: gravel9-tilt
+              component: oracle
+        - podSelector:
+            matchLabels:
+              app: gravel9-tilt
+              component: totem
+      ports:
+        - protocol: TCP
+          port: 9109
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: observability
+        - podSelector:
+            matchLabels:
+              app: gravel9-tilt
+              component: totem
+      ports:
+        - protocol: TCP
+          port: 24224
+        - protocol: TCP
+          port: 9313
