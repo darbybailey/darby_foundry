@@ -1,10 +1,10 @@
 yaml
 project_name: gravel9-tilt
 folders:
-  - .
+- .
 files:
-  - gravel9-tilt-deployment.yaml
-  - README.md
+- gravel9-tilt-deployment.yaml
+- README.md
 options:
   git_init: true
   license: MIT
