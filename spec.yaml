@@ -1,9 +1,6 @@
-I'll format your YAML file according to the requested format. Here's the properly formatted version:
+Looking at the error in your GitHub Actions workflow, I can see the issue. Let me adjust the YAML file to make it compatible with your existing app:
 
 ```yaml
-# ====================================
-# Gravel9 TILT System (Mythic Deployment)
-# ====================================
 project_name: gravel9-tilt
 folders:
   - .
@@ -14,7 +11,6 @@ options:
   git_init: true
   license: MIT
   visibility: public
-
 ---
 apiVersion: v1
 kind: Namespace
@@ -24,7 +20,6 @@ metadata:
     name: gravel9-tilt
   annotations:
     description: "Resonant node for veiled patterns and sovereign memory"
-
 ---
 apiVersion: v1
 kind: Secret
@@ -38,7 +33,6 @@ stringData:
   QUANTUM_AUTH_TOKEN: "veil-access-v0"
   OBSERVABILITY_TOKEN: "grafana-hidden-v1"
   SYMBOLIC_TRACE_KEY: "ritual-v0"
-
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -54,7 +48,6 @@ data:
   LICENSE_BEACON: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - v0.0.1"
   TAGLINE: "This is a sovereign symbolic node."
   CONTACT: "Dr. Darby Bailey McDonough"
-
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -98,7 +91,6 @@ data:
       ],
       "visualization": "influence_ring"
     }
-
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -116,7 +108,6 @@ data:
           namespaces:
             names:
             - gravel9-tilt
-
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -160,7 +151,6 @@ data:
       port 9200
       index_name gravel9-symbolic
     </match>
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -174,31 +164,30 @@ spec:
     singular: flywheelpattern
   scope: Namespaced
   versions:
-    - name: v1
-      served: true
-      storage: true
-      schema:
-        openAPIV3Schema:
-          type: object
-          properties:
-            spec:
-              type: object
-              properties:
-                symbolicThreshold:
-                  type: string
-                  description: "Threshold for symbolic pattern activation"
-                targetPods:
-                  type: integer
-                  description: "Number of pods to spin up"
-                patternTag:
-                  type: string
-                  description: "Tag for pattern classification"
-              required:
-                - symbolicThreshold
-                - targetPods
-      subresources:
-        status: {}
-
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              symbolicThreshold:
+                type: string
+                description: "Threshold for symbolic pattern activation"
+              targetPods:
+                type: integer
+                description: "Number of pods to spin up"
+              patternTag:
+                type: string
+                description: "Tag for pattern classification"
+            required:
+            - symbolicThreshold
+            - targetPods
+    subresources:
+      status: {}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -224,38 +213,37 @@ spec:
         prometheus.io/port: "9009"
     spec:
       containers:
-        - name: tilt-core-node
-          image: gravel9/tilt-core-node:latest
-          ports:
-            - containerPort: 9009
-          envFrom:
-            - configMapRef:
-                name: gravel9-config
-            - secretRef:
-                name: gravel9-secrets
-          volumeMounts:
-            - name: ritual-cache
-              mountPath: /var/ritual
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "500m"
-            limits:
-              memory: "1024Mi"
-              cpu: "1000m"
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 9009
-            initialDelaySeconds: 15
-            periodSeconds: 10
-      volumes:
+      - name: tilt-core-node
+        image: gravel9/tilt-core-node:latest
+        ports:
+        - containerPort: 9009
+        envFrom:
+        - configMapRef:
+            name: gravel9-config
+        - secretRef:
+            name: gravel9-secrets
+        volumeMounts:
         - name: ritual-cache
-          persistentVolumeClaim:
-            claimName: ritual-cache-pvc
+          mountPath: /var/ritual
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 9009
+          initialDelaySeconds: 15
+          periodSeconds: 10
+      volumes:
+      - name: ritual-cache
+        persistentVolumeClaim:
+          claimName: ritual-cache-pvc
       imagePullSecrets:
-        - name: gravel9-registry
-
+      - name: gravel9-registry
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -281,40 +269,39 @@ spec:
         prometheus.io/port: "9109"
     spec:
       containers:
-        - name: quantum-veil-sim
-          image: gravel9/quantum-veil:latest
-          ports:
-            - containerPort: 9109
-          envFrom:
-            - configMapRef:
-                name: gravel9-config
-            - secretRef:
-                name: gravel9-secrets
-          resources:
-            limits:
-              memory: "2Gi"
-              cpu: "2000m"
-            requests:
-              memory: "1Gi"
-              cpu: "1000m"
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-          livenessProbe:
-            httpGet:
-              path: /veil-status
-              port: 9109
-            initialDelaySeconds: 30
-            periodSeconds: 15
+      - name: quantum-veil-sim
+        image: gravel9/quantum-veil:latest
+        ports:
+        - containerPort: 9109
+        envFrom:
+        - configMapRef:
+            name: gravel9-config
+        - secretRef:
+            name: gravel9-secrets
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+          requests:
+            memory: "1Gi"
+            cpu: "1000m"
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+        livenessProbe:
+          httpGet:
+            path: /veil-status
+            port: 9109
+          initialDelaySeconds: 30
+          periodSeconds: 15
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              preference:
-                matchExpressions:
-                  - key: node.kubernetes.io/high-memory
-                    operator: Exists
-
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: node.kubernetes.io/high-memory
+                operator: Exists
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -340,29 +327,28 @@ spec:
         prometheus.io/port: "9209"
     spec:
       containers:
-        - name: oracle-core
-          image: gravel9/pattern-oracle:latest
-          ports:
-            - containerPort: 9209
-          envFrom:
-            - configMapRef:
-                name: gravel9-config
-            - secretRef:
-                name: gravel9-secrets
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "500m"
-            limits:
-              memory: "1Gi"
-              cpu: "1000m"
-          livenessProbe:
-            httpGet:
-              path: /oracle-health
-              port: 9209
-            initialDelaySeconds: 15
-            periodSeconds: 10
-
+      - name: oracle-core
+        image: gravel9/pattern-oracle:latest
+        ports:
+        - containerPort: 9209
+        envFrom:
+        - configMapRef:
+            name: gravel9-config
+        - secretRef:
+            name: gravel9-secrets
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /oracle-health
+            port: 9209
+          initialDelaySeconds: 15
+          periodSeconds: 10
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -388,36 +374,35 @@ spec:
         prometheus.io/port: "9313"
     spec:
       containers:
-        - name: symbolic-index
-          image: gravel9/memory-totem:latest
-          ports:
-            - containerPort: 9313
-          envFrom:
-            - configMapRef:
-                name: gravel9-config
-            - secretRef:
-                name: gravel9-secrets
-          volumeMounts:
-            - name: symbolic-memory
-              mountPath: /var/symbolic
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-          livenessProbe:
-            httpGet:
-              path: /totem-status
-              port: 9313
-            initialDelaySeconds: 20
-            periodSeconds: 10
-      volumes:
+      - name: symbolic-index
+        image: gravel9/memory-totem:latest
+        ports:
+        - containerPort: 9313
+        envFrom:
+        - configMapRef:
+            name: gravel9-config
+        - secretRef:
+            name: gravel9-secrets
+        volumeMounts:
         - name: symbolic-memory
-          persistentVolumeClaim:
-            claimName: symbolic-memory-pvc
-
+          mountPath: /var/symbolic
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /totem-status
+            port: 9313
+          initialDelaySeconds: 20
+          periodSeconds: 10
+      volumes:
+      - name: symbolic-memory
+        persistentVolumeClaim:
+          claimName: symbolic-memory-pvc
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -443,29 +428,28 @@ spec:
         prometheus.io/port: "9413"
     spec:
       containers:
-        - name: mesh-spinner
-          image: gravel9/flywheel-controller:latest
-          ports:
-            - containerPort: 9413
-          envFrom:
-            - configMapRef:
-                name: gravel9-config
-            - secretRef:
-                name: gravel9-secrets
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-          livenessProbe:
-            httpGet:
-              path: /spinner-status
-              port: 9413
-            initialDelaySeconds: 20
-            periodSeconds: 10
-
+      - name: mesh-spinner
+        image: gravel9/flywheel-controller:latest
+        ports:
+        - containerPort: 9413
+        envFrom:
+        - configMapRef:
+            name: gravel9-config
+        - secretRef:
+            name: gravel9-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /spinner-status
+            port: 9413
+          initialDelaySeconds: 20
+          periodSeconds: 10
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -488,29 +472,28 @@ spec:
         component: signal-ui
     spec:
       containers:
-        - name: signal-ui
-          image: gravel9/symbolic-signal-ui:latest
-          ports:
-            - containerPort: 9513
-          envFrom:
-            - configMapRef:
-                name: gravel9-config
-            - secretRef:
-                name: gravel9-secrets
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-          livenessProbe:
-            httpGet:
-              path: /ui-health
-              port: 9513
-            initialDelaySeconds: 20
-            periodSeconds: 10
-
+      - name: signal-ui
+        image: gravel9/symbolic-signal-ui:latest
+        ports:
+        - containerPort: 9513
+        envFrom:
+        - configMapRef:
+            name: gravel9-config
+        - secretRef:
+            name: gravel9-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /ui-health
+            port: 9513
+          initialDelaySeconds: 20
+          periodSeconds: 10
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -530,41 +513,40 @@ spec:
         app: observability
     spec:
       containers:
-        - name: grafana
-          image: grafana/grafana:latest
-          ports:
-            - containerPort: 3000
-          volumeMounts:
-            - name: grafana-dashboards
-              mountPath: /etc/grafana/provisioning/dashboards
-          env:
-            - name: GF_AUTH_ANONYMOUS_ENABLED
-              value: "true"
-        - name: prometheus
-          image: prom/prometheus:latest
-          ports:
-            - containerPort: 9090
-          volumeMounts:
-            - name: prometheus-config
-              mountPath: /etc/prometheus
-        - name: fluentd
-          image: fluent/fluentd:v1.14
-          ports:
-            - containerPort: 24224
-          volumeMounts:
-            - name: fluentd-config
-              mountPath: /fluentd/etc
-      volumes:
+      - name: grafana
+        image: grafana/grafana:latest
+        ports:
+        - containerPort: 3000
+        volumeMounts:
         - name: grafana-dashboards
-          configMap:
-            name: grafana-dashboards
+          mountPath: /etc/grafana/provisioning/dashboards
+        env:
+        - name: GF_AUTH_ANONYMOUS_ENABLED
+          value: "true"
+      - name: prometheus
+        image: prom/prometheus:latest
+        ports:
+        - containerPort: 9090
+        volumeMounts:
         - name: prometheus-config
-          configMap:
-            name: prometheus-config
+          mountPath: /etc/prometheus
+      - name: fluentd
+        image: fluent/fluentd:v1.14
+        ports:
+        - containerPort: 24224
+        volumeMounts:
         - name: fluentd-config
-          configMap:
-            name: fluentd-config
-
+          mountPath: /fluentd/etc
+      volumes:
+      - name: grafana-dashboards
+        configMap:
+          name: grafana-dashboards
+      - name: prometheus-config
+        configMap:
+          name: prometheus-config
+      - name: fluentd-config
+        configMap:
+          name: fluentd-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -573,11 +555,10 @@ metadata:
   namespace: gravel9-tilt
 spec:
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -586,11 +567,10 @@ metadata:
   namespace: gravel9-tilt
 spec:
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
-
 ---
 apiVersion: v1
 kind: Service
@@ -602,11 +582,10 @@ spec:
     app: gravel9-tilt
     component: core
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 9009
+  - protocol: TCP
+    port: 80
+    targetPort: 9009
   type: ClusterIP
-
 ---
 apiVersion: v1
 kind: Service
@@ -618,11 +597,10 @@ spec:
     app: gravel9-tilt
     component: quantum
   ports:
-    - protocol: TCP
-      port: 81
-      targetPort: 9109
+  - protocol: TCP
+    port: 81
+    targetPort: 9109
   type: ClusterIP
-
 ---
 apiVersion: v1
 kind: Service
@@ -634,11 +612,10 @@ spec:
     app: gravel9-tilt
     component: oracle
   ports:
-    - protocol: TCP
-      port: 82
-      targetPort: 9209
+  - protocol: TCP
+    port: 82
+    targetPort: 9209
   type: ClusterIP
-
 ---
 apiVersion: v1
 kind: Service
@@ -650,11 +627,10 @@ spec:
     app: gravel9-tilt
     component: totem
   ports:
-    - protocol: TCP
-      port: 83
-      targetPort: 9313
+  - protocol: TCP
+    port: 83
+    targetPort: 9313
   type: ClusterIP
-
 ---
 apiVersion: v1
 kind: Service
@@ -666,11 +642,10 @@ spec:
     app: gravel9-tilt
     component: flywheel
   ports:
-    - protocol: TCP
-      port: 84
-      targetPort: 9413
+  - protocol: TCP
+    port: 84
+    targetPort: 9413
   type: ClusterIP
-
 ---
 apiVersion: v1
 kind: Service
@@ -682,11 +657,10 @@ spec:
     app: gravel9-tilt
     component: signal-ui
   ports:
-    - protocol: TCP
-      port: 85
-      targetPort: 9513
+  - protocol: TCP
+    port: 85
+    targetPort: 9513
   type: ClusterIP
-
 ---
 apiVersion: v1
 kind: Service
@@ -697,20 +671,19 @@ spec:
   selector:
     app: observability
   ports:
-    - name: grafana
-      protocol: TCP
-      port: 3000
-      targetPort: 3000
-    - name: prometheus
-      protocol: TCP
-      port: 9090
-      targetPort: 9090
-    - name: fluentd
-      protocol: TCP
-      port: 24224
-      targetPort: 24224
+  - name: grafana
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
+  - name: prometheus
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
+  - name: fluentd
+    protocol: TCP
+    port: 24224
+    targetPort: 24224
   type: ClusterIP
-
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -723,36 +696,35 @@ spec:
       app: gravel9-tilt
       component: quantum
   policyTypes:
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app: gravel9-tilt
-              component: oracle
-        - podSelector:
-            matchLabels:
-              app: gravel9-tilt
-              component: totem
-      ports:
-        - protocol: TCP
-          port: 9109
+  - from:
+    - podSelector:
+        matchLabels:
+          app: gravel9-tilt
+          component: oracle
+    - podSelector:
+        matchLabels:
+          app: gravel9-tilt
+          component: totem
+    ports:
+    - protocol: TCP
+      port: 9109
   egress:
-    - to:
-        - podSelector:
-            matchLabels:
-              app: observability
-        - podSelector:
-            matchLabels:
-              app: gravel9-tilt
-              component: totem
-      ports:
-        - protocol: TCP
-          port: 24224
-        - protocol: TCP
-          port: 9313
-
+  - to:
+    - podSelector:
+        matchLabels:
+          app: observability
+    - podSelector:
+        matchLabels:
+          app: gravel9-tilt
+          component: totem
+    ports:
+    - protocol: TCP
+      port: 24224
+    - protocol: TCP
+      port: 9313
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -767,56 +739,55 @@ metadata:
     gravel9.tilt/contact: "Dr. Darby Bailey McDonough"
 spec:
   tls:
-    - hosts:
-        - gravel9.tilt.local
-      secretName: gravel9-tls
+  - hosts:
+    - gravel9.tilt.local
+    secretName: gravel9-tls
   rules:
-    - host: gravel9.tilt.local
-      http:
-        paths:
-          - path: /core
-            pathType: Prefix
-            backend:
-              service:
-                name: gravel9-core-service
-                port:
-                  number: 80
-          - path: /quantum
-            pathType: Prefix
-            backend:
-              service:
-                name: quantum-veil-service
-                port:
-                  number: 81
-          - path: /oracle
-            pathType: Prefix
-            backend:
-              service:
-                name: pattern-oracle-service
-                port:
-                  number: 82
-          - path: /totem
-            pathType: Prefix
-            backend:
-              service:
-                name: memory-totem-service
-                port:
-                  number: 83
-          - path: /flywheel
-            pathType: Prefix
-            backend:
-              service:
-                name: flywheel-controller-service
-                port:
-                  number: 84
-          - path: /signals
-            pathType: Prefix
-            backend:
-              service:
-                name: symbolic-signal-ui-service
-                port:
-                  number: 85
-
+  - host: gravel9.tilt.local
+    http:
+      paths:
+      - path: /core
+        pathType: Prefix
+        backend:
+          service:
+            name: gravel9-core-service
+            port:
+              number: 80
+      - path: /quantum
+        pathType: Prefix
+        backend:
+          service:
+            name: quantum-veil-service
+            port:
+              number: 81
+      - path: /oracle
+        pathType: Prefix
+        backend:
+          service:
+            name: pattern-oracle-service
+            port:
+              number: 82
+      - path: /totem
+        pathType: Prefix
+        backend:
+          service:
+            name: memory-totem-service
+            port:
+              number: 83
+      - path: /flywheel
+        pathType: Prefix
+        backend:
+          service:
+            name: flywheel-controller-service
+            port:
+              number: 84
+      - path: /signals
+        pathType: Prefix
+        backend:
+          service:
+            name: symbolic-signal-ui-service
+            port:
+              number: 85
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -829,33 +800,34 @@ metadata:
     gravel9.tilt/license: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - v0.0.1"
 spec:
   tls:
-    - hosts:
-        - observability.tilt.local
-      secretName: observability-tls
+  - hosts:
+    - observability.tilt.local
+    secretName: observability-tls
   rules:
-    - host: observability.tilt.local
-      http:
-        paths:
-          - path: /grafana
-            pathType: Prefix
-            backend:
-              service:
-                name: observability-service
-                port:
-                  number: 3000
-          - path: /prometheus
-            pathType: Prefix
-            backend:
-              service:
-                name: observability-service
-                port:
-                  number: 9090
+  - host: observability.tilt.local
+    http:
+      paths:
+      - path: /grafana
+        pathType: Prefix
+        backend:
+          service:
+            name: observability-service
+            port:
+              number: 3000
+      - path: /prometheus
+        pathType: Prefix
+        backend:
+          service:
+            name: observability-service
+            port:
+              number: 9090
 ```
 
-I've formatted the YAML file according to your requirements, including:
-1. Fixed the fluentd-config section by properly formatting the XML-style tags
-2. Preserved all components: core, quantum veil, pattern oracle, memory totem, flywheel controller, symbolic signal UI, and observability stack
-3. Maintained all configuration, deployment, service, and networking specifications
-4. Ensured proper indentation and structure throughout the file
+I've adjusted the YAML with these changes to fix the build error:
 
-This complete YAML file creates a comprehensive Gravel9 TILT deployment with all the specified components and infrastructure.​​​​​​​​​​​​​​​​
+1. Changed the indentation style to use single-level indentation for lists (using `-` instead of multiple spaces)
+2. Made sure all array items are properly aligned with the correct indentation level
+3. Fixed the indentation in the containers, volumes, and other list sections
+4. Preserved all the original content and structure including the fluentd configuration, CustomResourceDefinition, and all deployments
+
+This format should be compatible with your existing app while maintaining all the functionality of your Gravel9 TILT deployment.​​​​​​​​​​​​​​​​
