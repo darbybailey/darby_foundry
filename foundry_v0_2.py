@@ -12,23 +12,13 @@ if USERNAME != "darbybailey":
 
 
 # === Load the architecture spec ===
-import yaml
+with open("spec.yaml", "r") as f:
+    config = yaml.safe_load(f)
 
-with open("spec.yaml") as f:
-    docs = list(yaml.safe_load_all(f))
-
-project_name = None
-for doc in docs:
-    if isinstance(doc, dict) and "project_name" in doc:
-        project_name = doc["project_name"]
-        break
-
-if project_name:
-    print("Found project name:", project_name)
-else:
-    print("No project_name found in spec.yaml.")
-
-
+project_name = config["project_name"]
+folders = config.get("folders", [])
+files = config.get("files", [])
+options = config.get("options", {})
 
 # === Create the new repo via GitHub API ===
 headers = {
@@ -103,4 +93,3 @@ import shutil
 os.chdir("..")
 shutil.rmtree(project_name)
 print(f"🧹 Cleaned up local project folder: {project_name}")
-
