@@ -1,4 +1,4 @@
-# 🔥 Foundry — Darby’s Self-Replicating Dev Engine
+# 🔥 Darby Foundry — a Self-Replicating Dev Deployer
 
 **Foundry** is a GitHub-native code scaffolding engine that creates fully structured repos from symbolic specs.  
 It's the core of the Darby ecosystem — used to generate, launch, and track all app builds across domains.
