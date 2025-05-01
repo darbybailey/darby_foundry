@@ -13,7 +13,7 @@ if USERNAME != "darbybailey":
 
 # === Load the architecture spec ===
 with open("spec.yaml", "r") as f:
-    config = yaml.safe_load(f)
+    config = list(yaml.safe_load_all(f))
 
 project_name = config["project_name"]
 folders = config.get("folders", [])
