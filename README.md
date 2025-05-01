@@ -1,74 +1,105 @@
-🔨 Darby Foundry
+# 🔥 Foundry — Darby’s Self-Replicating Dev Engine
 
-A symbolic scaffolding engine that builds fully structured GitHub repositories from a single architecture spec.
+**Foundry** is a GitHub-native code scaffolding engine that creates fully structured repos from symbolic specs.  
+It's the core of the Darby ecosystem — used to generate, launch, and track all app builds across domains.
 
-Foundry creates public or private repos from YAML or text-based blueprints and powers your entire app ecosystem with traceable, intentional builds.
+This repo auto-generates:
+- 🔨 Public or private GitHub repos
+- 🧱 Full folder and file structures based on your custom spec
+- 🧹 Self-cleaning builds
+- 🧠 Optional metadata tracking (see below)
 
-👉 ▶️ Run Foundry Builder
+---
 
-✨ How It Works
+## ✍️ How to Use Foundry
 
-Edit the spec.yaml file
+1. Open [`spec.yaml`](spec.yaml)
+2. Paste your project architecture (see example below)
+3. Save and commit
+4. [Run Foundry Builder →](../../actions/workflows/build.yml)
+5. A new repo is created with:
+   - All folders/files scaffolded
+   - Pushed to your GitHub account
+   - Local working directory wiped
 
-Paste in your app’s structure and set the visibility flag:
+---
 
-options:
-  visibility: private   # or "public"
+## 📁 Example `spec.yaml`
 
-Save and commit the file
-
-Run the workflow linked above
-
-A new GitHub repo is created and scaffolded automatically
-
-Foundry logs the build and self-cleans
-
-📁 Example spec.yaml
-
-project_name: echo-mapper
+### Public repo:
+```yaml
+project_name: kanban-scribe
 folders:
   - core/
-    - ingest/
-    - signal/
-  - interface/
-    - web/
+    - logic/
+    - ui/
 files:
   - README.md
   - .env
   - help.md
 options:
-  visibility: private   # Make it public or private
+  visibility: public
+  license: MIT
   git_init: true
 
-🧠 How Tracking Works
 
-🔓 Public Tracker (Default)
+project_name: finance-mirror
+folders:
+  - logic/
+  - dashboard/
+files:
+  - README.md
+  - .env
+  - accounts.csv
+options:
+  visibility: private
+  git_init: true
 
-Logs repo name, creation time, and link
 
-(Coming soon): Adds to foundry-log.md for portfolio indexing
+🔐 Tracking + Privacy
+Foundry currently supports two layers of tracking:
 
-🔐 Private Tracker (LetHerCook)
+1. foundry tracks build metadata (basic, optional)
+✅ Repo name, creation timestamp, visibility
 
-Advanced internal tracking of:
+Future version will log this to foundry-log.json
 
-App category, intent, audience
+2. let-her-cook (private) will track full ecosystem data
+💸 Estimated costs, dev time, phases
 
-Time, cost, revenue, usage
+📊 Ranking, category, tags, status
 
-Performance scoring and prioritization
+💾 Stored in a secure internal repo
 
-Stored in your private let-her-cook repo
+🧠 Why Foundry Exists
+This engine gives Darby the power to:
 
-(Coming soon): Syncs on every build
+Generate entire dev stacks from YAML specs
+Track ecosystem growth
+Launch symbolic systems at scale
 
-🔐 Security
+---
 
-Your personal token is never committed
+## ⚠️ Security Notice
 
-This engine is locked to @darbybailey and cannot be run by others
+This repo includes a GitHub Action that is **locked to the original creator’s account** using a username check in `foundry_v0_2.py`.
 
-📜 License
+### 🚫 Do not attempt to run workflows in this repo unless:
+- You are the original owner (`darbybailey`)
+- You have configured your own GitHub token + username in a fork
 
-MIT — Build your system. Own your signal.
+### ✅ Want to use Foundry?
 
+1. **Fork this repo**
+2. Go to your fork → `Settings → Secrets → Actions`
+3. Add your own:
+   - `FOUNDRY_TOKEN_PERSONAL` (GitHub Personal Access Token)
+   - `FOUNDRY_USERNAME` (your GitHub username)
+4. Update `foundry_v0_2.py` to replace `darbybailey` with your GitHub username in the locked line:
+   ```python
+   if USERNAME != "yourusername":
+       raise Exception("❌ Unauthorized user.")
+Once configured, you can safely use Foundry as your own GitHub-native scaffold generator.
+
+License
+MIT — Build your system, own your signal.
