@@ -7,6 +7,10 @@ import yaml
 GITHUB_TOKEN = os.environ['FOUNDRY_TOKEN_PERSONAL']
 USERNAME = os.environ['FOUNDRY_USERNAME']
 
+if USERNAME != "darbybailey":
+    raise Exception("❌ Unauthorized user. Only darbybailey can run this workflow. Please copy this to your own GitHub account, create your token and username to run in your own account")
+
+
 # === Load the architecture spec ===
 with open("spec.yaml", "r") as f:
     config = yaml.safe_load(f)
