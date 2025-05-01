@@ -1,20 +1,644 @@
-project_name: let-her-cook
-folders:
-  - tracker/
-    - data/
-    - models/
-    - logic/
-    - dashboards/
-  - interface/
-    - mobile/
-    - browser/
-  - logs/
-files:
-  - README.md
-  - .env
-  - cook-log.json
-  - cook-schema.yaml
-  - help.md
-options:
-  visibility: private
-  git_init: true
+# ====================================
+# Gravel9 TILT System (Mythic Deployment)
+# ====================================
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gravel9-tilt
+  labels:
+    name: gravel9-tilt
+  annotations:
+    description: "Resonant node for veiled patterns and sovereign memory"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gravel9-secrets
+  namespace: gravel9-tilt
+type: Opaque
+stringData:
+  EVA_ACCESS_KEY: "REDACTED"
+  NODE_PATTERN_SALT: "entropy-salt-seed-v9"
+  QUANTUM_AUTH_TOKEN: "veil-access-v0"
+  OBSERVABILITY_TOKEN: "grafana-hidden-v1"
+  SYMBOLIC_TRACE_KEY: "ritual-v0"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gravel9-config
+  namespace: gravel9-tilt
+data:
+  NODE_MODE: "resonant"
+  OBSERVABILITY_MODE: "true"
+  TILT_VERSION: "v0.0.1"
+  QUANTUM_TEST_MODE: "true"
+  GRAFANA_DASHBOARD_ENABLED: "true"
+  LICENSE_BEACON: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - v0.0.1"
+  TAGLINE: "This is a sovereign symbolic node."
+  CONTACT: "Dr. Darby Bailey McDonough"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: gravel9-tilt
+data:
+  quantum-veil-patterns.json: |
+    {
+      "title": "Veil Patterns",
+      "type": "heatmap",
+      "targets": [
+        {
+          "expr": "rate(lattice_steps_total[5m])",
+          "format": "time_series"
+        }
+      ],
+      "visualization": "lattice_flow"
+    }
+  oracle-entropy.json: |
+    {
+      "title": "Oracle Entropy",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "entropy_metrics",
+          "format": "time_series"
+        }
+      ],
+      "visualization": "flywheel_drift"
+    }
+  memory-totem-signals.json: |
+    {
+      "title": "Symbolic Signals",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(symbolic_ritual_events_total)",
+          "format": "time_series"
+        }
+      ],
+      "visualization": "influence_ring"
+    }
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: flywheelpatterns.gravel9.tilt
+spec:
+  group: gravel9.tilt
+  names:
+    kind: FlywheelPattern
+    plural: flywheelpatterns
+    singular: flywheelpattern
+  scope: Namespaced
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                symbolicThreshold:
+                  type: string
+                targetPods:
+                  type: integer
+                patternTag:
+                  type: string
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gravel9-tilt-core
+  namespace: gravel9-tilt
+  labels:
+    app: gravel9-tilt
+    component: core
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gravel9-tilt
+      component: core
+  template:
+    metadata:
+      labels:
+        app: gravel9-tilt
+        component: core
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9009"
+    spec:
+      containers:
+        - name: tilt-core-node
+          image: gravel9/tilt-core-node:latest
+          ports:
+            - containerPort: 9009
+          envFrom:
+            - configMapRef:
+                name: gravel9-config
+            - secretRef:
+                name: gravel9-secrets
+          volumeMounts:
+            - name: ritual-cache
+              mountPath: /var/ritual
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9009
+            initialDelaySeconds: 15
+            periodSeconds: 10
+      volumes:
+        - name: ritual-cache
+          persistentVolumeClaim:
+            claimName: ritual-cache-pvc
+      imagePullSecrets:
+        - name: gravel9-registry
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quantum-veil
+  namespace: gravel9-tilt
+  labels:
+    app: gravel9-tilt
+    component: quantum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gravel9-tilt
+      component: quantum
+  template:
+    metadata:
+      labels:
+        app: gravel9-tilt
+        component: quantum
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9109"
+    spec:
+      containers:
+        - name: quantum-veil-sim
+          image: gravel9/quantum-veil:latest
+          ports:
+            - containerPort: 9109
+          envFrom:
+            - configMapRef:
+                name: gravel9-config
+            - secretRef:
+                name: gravel9-secrets
+          resources:
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+            requests:
+              memory: "1Gi"
+              cpu: "1000m"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          livenessProbe:
+            httpGet:
+              path: /veil-status
+              port: 9109
+            initialDelaySeconds: 30
+            periodSeconds: 15
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pattern-oracle
+  namespace: gravel9-tilt
+  labels:
+    app: gravel9-tilt
+    component: oracle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gravel9-tilt
+      component: oracle
+  template:
+    metadata:
+      labels:
+        app: gravel9-tilt
+        component: oracle
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9209"
+    spec:
+      containers:
+        - name: oracle-core
+          image: gravel9/pattern-oracle:latest
+          ports:
+            - containerPort: 9209
+          envFrom:
+            - configMapRef:
+                name: gravel9-config
+            - secretRef:
+                name: gravel9-secrets
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /oracle-health
+              port: 9209
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memory-totem
+  namespace: gravel9-tilt
+  labels:
+    app: gravel9-tilt
+    component: totem
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gravel9-tilt
+      component: totem
+  template:
+    metadata:
+      labels:
+        app: gravel9-tilt
+        component: totem
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9313"
+    spec:
+      containers:
+        - name: symbolic-index
+          image: gravel9/memory-totem:latest
+          ports:
+            - containerPort: 9313
+          envFrom:
+            - configMapRef:
+                name: gravel9-config
+            - secretRef:
+                name: gravel9-secrets
+          volumeMounts:
+            - name: symbolic-memory
+              mountPath: /var/symbolic
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /totem-status
+              port: 9313
+            initialDelaySeconds: 20
+            periodSeconds: 10
+      volumes:
+        - name: symbolic-memory
+          persistentVolumeClaim:
+            claimName: symbolic-memory-pvc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flywheel-controller
+  namespace: gravel9-tilt
+  labels:
+    app: gravel9-tilt
+    component: flywheel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gravel9-tilt
+      component: flywheel
+  template:
+    metadata:
+      labels:
+        app: gravel9-tilt
+        component: flywheel
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9413"
+    spec:
+      containers:
+        - name: mesh-spinner
+          image: gravel9/flywheel-controller:latest
+          ports:
+            - containerPort: 9413
+          envFrom:
+            - configMapRef:
+                name: gravel9-config
+            - secretRef:
+                name: gravel9-secrets
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /spinner-status
+              port: 9413
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: symbolic-signal-ui
+  namespace: gravel9-tilt
+  labels:
+    app: gravel9-tilt
+    component: signal-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gravel9-tilt
+      component: signal-ui
+  template:
+    metadata:
+      labels:
+        app: gravel9-tilt
+        component: signal-ui
+    spec:
+      containers:
+        - name: signal-ui
+          image: gravel9/symbolic-signal-ui:latest
+          ports:
+            - containerPort: 9513
+          envFrom:
+            - configMapRef:
+                name: gravel9-config
+            - secretRef:
+                name: gravel9-secrets
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /ui-health
+              port: 9513
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ritual-cache-pvc
+  namespace: gravel9-tilt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: symbolic-memory-pvc
+  namespace: gravel9-tilt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gravel9-core-service
+  namespace: gravel9-tilt
+spec:
+  selector:
+    app: gravel9-tilt
+    component: core
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9009
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quantum-veil-service
+  namespace: gravel9-tilt
+spec:
+  selector:
+    app: gravel9-tilt
+    component: quantum
+  ports:
+    - protocol: TCP
+      port: 81
+      targetPort: 9109
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pattern-oracle-service
+  namespace: gravel9-tilt
+spec:
+  selector:
+    app: gravel9-tilt
+    component: oracle
+  ports:
+    - protocol: TCP
+      port: 82
+      targetPort: 9209
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: memory-totem-service
+  namespace: gravel9-tilt
+spec:
+  selector:
+    app: gravel9-tilt
+    component: totem
+  ports:
+    - protocol: TCP
+      port: 83
+      targetPort: 9313
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flywheel-controller-service
+  namespace: gravel9-tilt
+spec:
+  selector:
+    app: gravel9-tilt
+    component: flywheel
+  ports:
+    - protocol: TCP
+      port: 84
+      targetPort: 9413
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: symbolic-signal-ui-service
+  namespace: gravel9-tilt
+spec:
+  selector:
+    app: gravel9-tilt
+    component: signal-ui
+  ports:
+    - protocol: TCP
+      port: 85
+      targetPort: 9513
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: quantum-veil-isolation
+  namespace: gravel9-tilt
+spec:
+  podSelector:
+    matchLabels:
+      app: gravel9-tilt
+      component: quantum
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: gravel9-tilt
+              component: oracle
+        - podSelector:
+            matchLabels:
+              app: gravel9-tilt
+              component: totem
+      ports:
+        - protocol: TCP
+          port: 9109
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: observability
+        - podSelector:
+            matchLabels:
+              app: gravel9-tilt
+              component: totem
+      ports:
+        - protocol: TCP
+          port: 24224
+        - protocol: TCP
+          port: 9313
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gravel9-ingress
+  namespace: gravel9-tilt
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    gravel9.tilt/license: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - v0.0.1"
+    gravel9.tilt/tagline: "This is a sovereign symbolic node."
+    gravel9.tilt/contact: "Dr. Darby Bailey McDonough"
+spec:
+  tls:
+    - hosts:
+        - gravel9.tilt.local
+      secretName: gravel9-tls
+  rules:
+    - host: gravel9.tilt.local
+      http:
+        paths:
+          - path: /core
+            pathType: Prefix
+            backend:
+              service:
+                name: gravel9-core-service
+                port:
+                  number: 80
+          - path: /quantum
+            pathType: Prefix
+            backend:
+              service:
+                name: quantum-veil-service
+                port:
+                  number: 81
+          - path: /oracle
+            pathType: Prefix
+            backend:
+              service:
+                name: pattern-oracle-service
+                port:
+                  number: 82
+          - path: /totem
+            pathType: Prefix
+            backend:
+              service:
+                name: memory-totem-service
+                port:
+                  number: 83
+          - path: /flywheel
+            pathType: Prefix
+            backend:
+              service:
+                name: flywheel-controller-service
+                port:
+                  number: 84
+          - path: /signals
+            pathType: Prefix
+            backend:
+              service:
+                name: symbolic-signal-ui-service
+                port:
+                  number: 85
+
+
