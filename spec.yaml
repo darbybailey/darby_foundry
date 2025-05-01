@@ -819,13 +819,3 @@ spec:
             name: observability-service
             port:
               number: 9090
-```
-
-I've adjusted the YAML with these changes to fix the build error:
-
-1. Changed the indentation style to use single-level indentation for lists (using `-` instead of multiple spaces)
-2. Made sure all array items are properly aligned with the correct indentation level
-3. Fixed the indentation in the containers, volumes, and other list sections
-4. Preserved all the original content and structure including the fluentd configuration, CustomResourceDefinition, and all deployments
-
-This format should be compatible with your existing app while maintaining all the functionality of your Gravel9 TILT deployment.​​​​​​​​​​​​​​​​
