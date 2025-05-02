@@ -1,49 +1,41 @@
 
 #!/usr/bin/env python3
 # Foundry v0.2 - GitHub repo generator
-# Handles complex YAML with K8s specifications
 
 import os
 import yaml
 import requests
-import re
-import subprocess
 
-# === Setup custom YAML processing ===
-def custom_yaml_loader():
-    with open("spec.yaml", "r") as f:
-        content = f.read()
-    
-    # First, extract the foundry config from the beginning
-    config_pattern = r'^project_name:.*?(?=^---)'
-    config_match = re.search(config_pattern, content, re.DOTALL | re.MULTILINE)
-    
-    if not config_match:
-        raise ValueError("No Foundry config found in spec.yaml.")
-    
-    config_text = config_match.group(0)
-    
-    # Parse just the config section
-    config = yaml.safe_load(config_text)
-    
-    # Extract all content after first '---' for k8s resources
-    deployment_content = content[content.find('---'):]
-    
-    return config, deployment_content
+# === 1. Load all YAML documents from spec.yaml ===
+with open("spec.yaml", "r") as f:
+    # Safe load all YAML documents
+    try:
+        docs = list(yaml.safe_load_all(f))
+        print(f"✅ Loaded {len(docs)} YAML documents from spec.yaml")
+    except Exception as e:
+        print(f"❌ Failed to parse YAML: {e}")
+        raise
 
-# === 1. Load the correct YAML blocks from spec.yaml ===
-config, deployment_content = custom_yaml_loader()
+# Look for the Foundry config block (first doc with project_name)
+config = next(
+    (doc for doc in docs if isinstance(doc, dict) and "project_name" in doc),
+    None
+)
+
+if config is None:
+    raise ValueError("No Foundry config found in spec.yaml.")
 
 project_name = config["project_name"]
 folders = config.get("folders", [])
 files = config.get("files", [])
 options = config.get("options", {})
 
-print(f"✅ Loaded project config: {project_name}")
+print(f"✅ Found project configuration: {project_name}")
 
 # === 2. Create base project folder ===
 os.makedirs(project_name, exist_ok=True)
 os.chdir(project_name)
+print(f"✅ Created project directory: {project_name}")
 
 # === 3. Recursively create folders ===
 def create_nested(path):
@@ -58,41 +50,43 @@ for folder in folders:
         print(f"✅ Created folder: {folder}")
 
 # === 4. Create files ===
+# For the deployment file, include all YAML docs except the config one
+k8s_docs = [doc for doc in docs if doc != config and doc is not None]
+
 for file in files:
-    if file == "gravel9-tilt-deployment.yaml":
-        # Save the deployment content to the deployment file
-        with open(file, "w") as f:
-            f.write(deployment_content)
-        print(f"✅ Created file with k8s resources: {file}")
-    else:
-        # Create a README with project info
-        if file == "README.md":
+    try:
+        if file == "gravel9-tilt-deployment.yaml":
             with open(file, "w") as f:
-                f.write(f"# {project_name}\n\nResonant node for veiled patterns and sovereign memory.\n\n## Components\n\n- Quantum Veil\n- Pattern Oracle\n- Memory Totem\n- Flywheel Controller\n- Symbolic Signal UI\n\n© {2025} Proprietary - All Rights Reserved")
-            print(f"✅ Created README with project info: {file}")
+                for i, doc in enumerate(k8s_docs):
+                    yaml.dump(doc, f, default_flow_style=False)
+                    if i < len(k8s_docs) - 1:
+                        f.write("\n---\n")
+            print(f"✅ Created deployment file with {len(k8s_docs)} K8s resources")
         else:
-            # Create empty files for other entries
-            with open(file, "w") as f:
-                f.write("")
-            print(f"✅ Created empty file: {file}")
+            # For README.md, create a simple content
+            if file == "README.md":
+                with open(file, "w") as f:
+                    f.write(f"# {project_name}\n\nResonant node for veiled patterns and sovereign memory.")
+                print(f"✅ Created README file")
+            else:
+                # Create empty files for other entries
+                with open(file, "w") as f:
+                    f.write("")
+                print(f"✅ Created empty file: {file}")
+    except Exception as e:
+        print(f"❌ Failed to create file {file}: {e}")
 
 # === 5. Git init (optional) ===
 if options.get("git_init", False):
     try:
-        # Initialize git repository
-        subprocess.run(["git", "init"], check=True)
-        print("✅ Initialized git repository")
-        
-        # Configure git user info for the commit
-        subprocess.run(["git", "config", "user.name", "Foundry Bot"], check=True)
-        subprocess.run(["git", "config", "user.email", "foundry@example.com"], check=True)
-        
-        # Add all files and commit
-        subprocess.run(["git", "add", "."], check=True)
-        subprocess.run(["git", "commit", "-m", "Initial commit from Foundry"], check=True)
-        print("✅ Committed files to local repository")
-    except subprocess.CalledProcessError as e:
-        print(f"⚠️ Git operation failed: {e}")
+        os.system("git init")
+        os.system("git config user.name 'Foundry Bot'")
+        os.system("git config user.email 'foundry@example.com'")
+        os.system("git add .")
+        os.system("git commit -m 'Initial commit from Foundry'")
+        print("✅ Initialized git repository and committed files")
+    except Exception as e:
+        print(f"❌ Git operations failed: {e}")
 
 # === 6. Create GitHub repo if token and username are available ===
 token = os.environ.get("FOUNDRY_TOKEN_PERSONAL")
@@ -119,22 +113,30 @@ if token and username:
 
     if res.status_code == 201:
         repo_url = res.json().get('html_url')
-        print(f"✅ Repo created: {repo_url}")
+        print(f"✅ Created GitHub repository: {repo_url}")
         
         # Push to GitHub
-        try:
-            # Configure the remote
-            remote_url = f"https://{username}:{token}@github.com/{username}/{project_name}.git"
-            subprocess.run(["git", "remote", "add", "origin", remote_url], check=True)
+        remote_url = f"https://{username}:{token}@github.com/{username}/{project_name}.git"
+        os.system(f"git remote add origin {remote_url}")
+        
+        # Try both main and master branch names
+        push_result = os.system("git push -u origin main")
+        if push_result != 0:
+            os.system("git branch -M main")  # Rename master to main if needed
+            push_result = os.system("git push -u origin main")
             
-            # Push to the remote repository
-            subprocess.run(["git", "push", "-u", "origin", "master"], check=True)
-            print("✅ Code pushed to GitHub successfully")
-        except subprocess.CalledProcessError as e:
-            print(f"⚠️ Failed to push to GitHub: {e}")
+        if push_result == 0:
+            print("✅ Successfully pushed code to GitHub")
+        else:
+            # Try with master branch name as fallback
+            push_result = os.system("git push -u origin master")
+            if push_result == 0:
+                print("✅ Successfully pushed code to GitHub using master branch")
+            else:
+                print("⚠️ Failed to push code to GitHub")
     else:
-        raise Exception(f"❌ Repo creation failed: {res.status_code} - {res.text}")
+        print(f"❌ Failed to create GitHub repository: {res.status_code} - {res.text}")
 else:
-    print("⚠️ Skipping GitHub repo creation (missing credentials)")
+    print("⚠️ Skipping GitHub operations (missing credentials)")
 
 print(f"✅ Foundry build complete for {project_name}!")
