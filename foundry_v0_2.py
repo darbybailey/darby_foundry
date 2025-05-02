@@ -1,4 +1,7 @@
-python
+#!/usr/bin/env python3
+# Foundry v0.2 - GitHub repo generator
+# Handles complex YAML with K8s specifications
+
 import os
 import yaml
 import requests
