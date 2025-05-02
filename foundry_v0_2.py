@@ -1,13 +1,16 @@
-
 #!/usr/bin/env python3
-# Foundry v0.2 - Fixed to handle invalid YAML header
+# Foundry v0.2 - Fixed version with enhanced GitHub repo creation
 
 import os
 import yaml
 import requests
 import sys
+import time
+import subprocess
 
 try:
+    print("Starting Foundry v0.2...")
+    
     # Read the file and remove the erroneous "yaml" line
     with open("spec.yaml", "r") as f:
         content = f.read()
@@ -36,11 +39,13 @@ try:
     # Create project folder
     os.makedirs(project_name, exist_ok=True)
     os.chdir(project_name)
+    print(f"Created and entered directory: {project_name}")
     
     # Create folders
     for folder in folders:
         if isinstance(folder, str) and folder != ".":
             os.makedirs(folder, exist_ok=True)
+            print(f"Created folder: {folder}")
     
     # Create files
     for file in files:
@@ -49,49 +54,98 @@ try:
             k8s_content = "\n---\n".join(parts[1:])
             with open(file, "w") as f:
                 f.write(k8s_content)
+            print(f"Created deployment file: {file}")
         elif file == "README.md":
             with open(file, "w") as f:
                 f.write(f"# {project_name}\n\nResonant node for veiled patterns and sovereign memory.")
+            print(f"Created README file: {file}")
         else:
             with open(file, "w") as f:
                 f.write("")
+            print(f"Created empty file: {file}")
     
     # Git init
     if options.get("git_init", False):
-        os.system("git init")
-        os.system("git config user.name 'Foundry Bot'")
-        os.system("git config user.email 'foundry@example.com'")
-        os.system("git add .")
-        os.system("git commit -m 'Initial commit from Foundry'")
+        print("Initializing git repository...")
+        try:
+            subprocess.run(["git", "init"], check=True)
+            subprocess.run(["git", "config", "user.name", "Foundry Bot"], check=True)
+            subprocess.run(["git", "config", "user.email", "foundry@example.com"], check=True)
+            subprocess.run(["git", "add", "."], check=True)
+            subprocess.run(["git", "commit", "-m", "Initial commit from Foundry"], check=True)
+            print("Git repository initialized and files committed")
+        except subprocess.CalledProcessError as e:
+            print(f"Git initialization error: {e}")
     
     # Create GitHub repo
     token = os.environ.get("FOUNDRY_TOKEN_PERSONAL")
     username = os.environ.get("FOUNDRY_USERNAME")
     
-    if token and username:
-        if username != "darbybailey":
-            sys.exit("Unauthorized user")
-        
-        url = "https://api.github.com/user/repos"
-        headers = {
-            "Authorization": f"token {token}",
-            "Accept": "application/vnd.github.v3+json"
-        }
-        data = {
-            "name": project_name,
-            "private": options.get("visibility", "public") != "public"
-        }
-        
-        res = requests.post(url, headers=headers, json=data)
-        
-        if res.status_code == 201:
-            remote_url = f"https://{username}:{token}@github.com/{username}/{project_name}.git"
-            os.system(f"git remote add origin {remote_url}")
-            os.system("git push -u origin main")
-            print(f"Repository created and code pushed to GitHub")
+    if not token or not username:
+        print("❌ Missing GitHub credentials. Set FOUNDRY_TOKEN_PERSONAL and FOUNDRY_USERNAME in secrets.")
+        sys.exit(1)
     
-    print(f"Build complete for {project_name}")
+    print(f"Starting GitHub operations with user: {username}")
+    
+    # Security check - only allow authorized users
+    if username != "darbybailey":
+        print("❌ Unauthorized user.")
+        sys.exit(1)
+    
+    # Create GitHub repository
+    url = "https://api.github.com/user/repos"
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    data = {
+        "name": project_name,
+        "private": options.get("visibility", "public") != "public",
+        "auto_init": False
+    }
+    
+    print(f"Creating GitHub repository: {project_name}")
+    res = requests.post(url, headers=headers, json=data)
+    
+    if res.status_code == 201:
+        repo_url = res.json().get('html_url')
+        print(f"✅ GitHub repository created: {repo_url}")
+        
+        # Wait a moment for GitHub to set up the repo
+        print("Waiting for GitHub to set up the repository...")
+        time.sleep(2)
+        
+        # Push to GitHub
+        try:
+            remote_url = f"https://{username}:{token}@github.com/{username}/{project_name}.git"
+            print(f"Adding remote: github.com/{username}/{project_name}.git")
+            subprocess.run(["git", "remote", "add", "origin", remote_url], check=True)
+            
+            # Try pushing with main branch first
+            try:
+                print("Attempting to push to main branch...")
+                subprocess.run(["git", "branch", "-M", "main"], check=True)
+                subprocess.run(["git", "push", "-u", "origin", "main"], check=True)
+                print("✅ Code pushed to GitHub main branch")
+            except subprocess.CalledProcessError:
+                print("Failed to push to main branch. Trying master branch...")
+                # Try with master as fallback
+                subprocess.run(["git", "branch", "-M", "master"], check=True)
+                subprocess.run(["git", "push", "-u", "origin", "master"], check=True)
+                print("✅ Code pushed to GitHub master branch")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ GitHub push failed: {e}")
+            # Show git status for debugging
+            print("Git status:")
+            subprocess.run(["git", "status"])
+            print("Git remote -v:")
+            subprocess.run(["git", "remote", "-v"])
+    else:
+        print(f"❌ GitHub repository creation failed: {res.status_code}")
+        print(f"Response: {res.text}")
+    
+    print(f"✅ Foundry build complete for {project_name}")
     
 except Exception as e:
-    print(f"Error: {e}")
+    print(f"❌ Error: {e}")
     sys.exit(1)
