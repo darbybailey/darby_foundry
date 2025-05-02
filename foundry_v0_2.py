@@ -1,6 +1,4 @@
-I see the issue now. It looks like the error is in the Python script itself - the first line contains the word "python" which is causing a `NameError`. Let me provide an updated script that should work properly:
-
-```python
+python
 import os
 import yaml
 import requests
