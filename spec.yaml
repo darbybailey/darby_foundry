@@ -7,8 +7,8 @@ files:
 - README.md
 options:
   git_init: true
-  license: MIT
-  visibility: public
+  license: proprietary
+  visibility: private
 ---
 apiVersion: v1
 kind: Namespace
@@ -43,7 +43,7 @@ data:
   TILT_VERSION: "v0.0.1"
   QUANTUM_TEST_MODE: "true"
   GRAFANA_DASHBOARD_ENABLED: "true"
-  LICENSE_BEACON: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - v0.0.1"
+  LICENSE_BEACON: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - PROPRIETARY - ALL RIGHTS RESERVED"
   TAGLINE: "This is a sovereign symbolic node."
   CONTACT: "Dr. Darby Bailey McDonough"
 ---
@@ -732,7 +732,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    gravel9.tilt/license: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - v0.0.1"
+    gravel9.tilt/license: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - PROPRIETARY - ALL RIGHTS RESERVED"
     gravel9.tilt/tagline: "This is a sovereign symbolic node."
     gravel9.tilt/contact: "Dr. Darby Bailey McDonough"
 spec:
@@ -795,7 +795,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    gravel9.tilt/license: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - v0.0.1"
+    gravel9.tilt/license: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - PROPRIETARY - ALL RIGHTS RESERVED"
 spec:
   tls:
   - hosts:
