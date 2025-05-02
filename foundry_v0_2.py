@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 # Foundry v0.2 - GitHub repo generator
 # Handles complex YAML with K8s specifications
@@ -6,6 +7,7 @@ import os
 import yaml
 import requests
 import re
+import subprocess
 
 # === Setup custom YAML processing ===
 def custom_yaml_loader():
@@ -63,15 +65,34 @@ for file in files:
             f.write(deployment_content)
         print(f"✅ Created file with k8s resources: {file}")
     else:
-        # Create empty files for other entries
-        with open(file, "w") as f:
-            f.write("")
-        print(f"✅ Created empty file: {file}")
+        # Create a README with project info
+        if file == "README.md":
+            with open(file, "w") as f:
+                f.write(f"# {project_name}\n\nResonant node for veiled patterns and sovereign memory.\n\n## Components\n\n- Quantum Veil\n- Pattern Oracle\n- Memory Totem\n- Flywheel Controller\n- Symbolic Signal UI\n\n© {2025} Proprietary - All Rights Reserved")
+            print(f"✅ Created README with project info: {file}")
+        else:
+            # Create empty files for other entries
+            with open(file, "w") as f:
+                f.write("")
+            print(f"✅ Created empty file: {file}")
 
 # === 5. Git init (optional) ===
 if options.get("git_init", False):
-    os.system("git init")
-    print("✅ Initialized git repository")
+    try:
+        # Initialize git repository
+        subprocess.run(["git", "init"], check=True)
+        print("✅ Initialized git repository")
+        
+        # Configure git user info for the commit
+        subprocess.run(["git", "config", "user.name", "Foundry Bot"], check=True)
+        subprocess.run(["git", "config", "user.email", "foundry@example.com"], check=True)
+        
+        # Add all files and commit
+        subprocess.run(["git", "add", "."], check=True)
+        subprocess.run(["git", "commit", "-m", "Initial commit from Foundry"], check=True)
+        print("✅ Committed files to local repository")
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️ Git operation failed: {e}")
 
 # === 6. Create GitHub repo if token and username are available ===
 token = os.environ.get("FOUNDRY_TOKEN_PERSONAL")
@@ -97,16 +118,22 @@ if token and username:
     res = requests.post(url, headers=headers, json=data)
 
     if res.status_code == 201:
-        print(f"✅ Repo created: {res.json().get('html_url')}")
+        repo_url = res.json().get('html_url')
+        print(f"✅ Repo created: {repo_url}")
         
         # Push to GitHub
-        os.system(f"git add .")
-        os.system(f"git commit -m 'Initial commit from Foundry'")
-        os.system(f"git remote add origin https://{username}:{token}@github.com/{username}/{project_name}.git")
-        os.system(f"git push -u origin master")
-        print("✅ Code pushed to GitHub")
+        try:
+            # Configure the remote
+            remote_url = f"https://{username}:{token}@github.com/{username}/{project_name}.git"
+            subprocess.run(["git", "remote", "add", "origin", remote_url], check=True)
+            
+            # Push to the remote repository
+            subprocess.run(["git", "push", "-u", "origin", "master"], check=True)
+            print("✅ Code pushed to GitHub successfully")
+        except subprocess.CalledProcessError as e:
+            print(f"⚠️ Failed to push to GitHub: {e}")
     else:
-        raise Exception(f"❌ Repo creation failed: {res.text}")
+        raise Exception(f"❌ Repo creation failed: {res.status_code} - {res.text}")
 else:
     print("⚠️ Skipping GitHub repo creation (missing credentials)")
 
