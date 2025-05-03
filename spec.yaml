@@ -1,3 +1,4 @@
+
 repository:
   name: hybrid-media-scaler
   description: HybridMediaScaler - A content delivery optimization system for video and audio with multilingual support, adaptive bitrate, and global CDN simulation
@@ -107,8 +108,8 @@ readme:
   sections:
     - name: Overview
       content: >
-        HybridMediaScaler is a system that intelligently delivers media content by using adaptive bitrate streaming,
-        multilingual translation, and real-time analytics to ensure global accessibility and performance.
+        HybridMediaScaler intelligently delivers video/audio content with real-time adaptation based on user location,
+        bandwidth, and language preferences—offering high performance and accessibility across the globe.
     - name: Features
       content: |
         - Adaptive FFmpeg encoding pipeline
@@ -126,24 +127,38 @@ readme:
         - Docker + Kubernetes
     - name: Getting Started
       content: |
-        1. Clone the repo
-        2. Run `docker-compose up`
-        3. Visit `localhost:3000` for the dashboard
-        4. API available at `localhost:8000/docs`
+        1. Clone the repository
+        2. Install dependencies via `pip install -r requirements.txt`
+        3. Run `docker-compose up` to launch the full stack
+        4. Visit the Grafana dashboard at `localhost:3000`
+        5. API available at `localhost:8000/docs`
     - name: License
       content: MIT License — see LICENSE file for details
 
 files_content:
   .env.example: |
     API_KEY=your_api_key_here
-    TRANSLATION_SERVICE_URL=https://api.translation.com
+    TRANSLATION_SERVICE_URL=https://api.translation-service.com
+
+  requirements.txt: |
+    fastapi
+    uvicorn
+    ffmpeg-python
+    tensorflow==2.15.0
+    prometheus-client
+    python-multipart
+    aiohttp
+    pydantic
+    numpy
+    scikit-learn
 
   docs/index.md: |
     # HybridMediaScaler Documentation
 
-    Welcome to the HybridMediaScaler documentation. This guide covers setup, API usage, encoding configuration, and multilingual streaming.
+    Welcome to the HybridMediaScaler documentation.
 
-    - See `encoding_guide.md` for FFmpeg encoding details
-    - See `multilingual_setup.md` for translation support
-    - See `cdn_simulation.md` for simulated CDN behavior
-    - See `api.md` for backend API reference
+    ## Sections
+    - `api.md`: API endpoint descriptions
+    - `encoding_guide.md`: How to configure FFmpeg pipelines
+    - `multilingual_setup.md`: Real-time multilingual configuration
+    - `cdn_simulation.md`: Edge caching and simulated CDN behavior
