@@ -1,6 +1,6 @@
 
 #!/usr/bin/env python3
-# Foundry v0.2 - Complete Repository Generator
+# Foundry v0.3 - Complete Repository Structure Generator
 
 import os
 import yaml
@@ -8,18 +8,60 @@ import requests
 import sys
 import subprocess
 import time
-import re
-import json
+import shutil
 
-print("Starting Foundry Repository Generator v0.2")
+print("Starting Foundry Complete Repository Builder v0.3")
+
+def create_file_with_content(file_path, content=""):
+    """Create a file with the specified content, ensuring the directory exists"""
+    dir_name = os.path.dirname(file_path)
+    if dir_name and not os.path.exists(dir_name):
+        os.makedirs(dir_name, exist_ok=True)
+        print(f"Created directory: {dir_name}")
+    
+    with open(file_path, "w") as f:
+        f.write(content)
+    print(f"Created file: {file_path}")
+
+def create_directory_structure(base_path, structure):
+    """Recursively create directories and files based on a dictionary structure"""
+    if not isinstance(structure, dict):
+        return
+    
+    for name, content in structure.items():
+        path = os.path.join(base_path, name)
+        
+        if isinstance(content, dict):
+            # It's a directory with subdirectories/files
+            os.makedirs(path, exist_ok=True)
+            print(f"Created directory: {path}")
+            create_directory_structure(path, content)
+        elif isinstance(content, str):
+            # It's a file with content
+            create_file_with_content(path, content)
+        elif content is None:
+            # It's an empty directory
+            os.makedirs(path, exist_ok=True)
+            print(f"Created empty directory: {path}")
+        elif isinstance(content, list):
+            # It's a directory with a list of files/subdirectories
+            os.makedirs(path, exist_ok=True)
+            print(f"Created directory with list content: {path}")
+            for item in content:
+                if isinstance(item, dict):
+                    for item_name, item_content in item.items():
+                        item_path = os.path.join(path, item_name)
+                        if isinstance(item_content, dict):
+                            os.makedirs(item_path, exist_ok=True)
+                            print(f"Created directory from list: {item_path}")
+                            create_directory_structure(item_path, item_content)
+                        else:
+                            create_file_with_content(item_path, item_content)
 
 try:
     # Read the spec.yaml file
     with open("spec.yaml", "r") as f:
         full_content = f.read()
-    
-    # Print the first few lines for debugging
-    print(f"First 50 chars of spec.yaml: {full_content[:50]}")
     
     # Remove "yaml" prefix if present
     lines = full_content.split("\n")
@@ -34,7 +76,6 @@ try:
     
     # Parse configuration
     config = yaml.safe_load(config_text)
-    print(f"Parsed config: {json.dumps(config, indent=2)}")
     
     # Extract key info
     project_name = config.get("project_name", "gravel9-tilt")
@@ -42,18 +83,7 @@ try:
     files = config.get("files", [])
     options = config.get("options", {})
     
-    # Extract additional repo structures if available
-    repo_structure = config.get("repo_structure", {})
-    source_files = repo_structure.get("source_files", [])
-    config_files = repo_structure.get("config_files", [])
-    test_files = repo_structure.get("test_files", [])
-    
     print(f"Project name: {project_name}")
-    print(f"Folders to create: {folders}")
-    print(f"Files to create: {files}")
-    print(f"Source files: {source_files}")
-    print(f"Config files: {config_files}")
-    print(f"Test files: {test_files}")
     
     # Get GitHub credentials
     token = os.environ.get("FOUNDRY_TOKEN_PERSONAL")
@@ -119,7 +149,6 @@ try:
     
     # Clean up any existing directory
     if os.path.exists(project_name):
-        import shutil
         shutil.rmtree(project_name)
         print(f"Removed existing local directory: {project_name}")
     
@@ -128,92 +157,77 @@ try:
     os.chdir(project_name)
     print(f"Created and entered directory: {project_name}")
     
-    # Function to handle nested paths
-    def ensure_directory(file_path):
-        directory = os.path.dirname(file_path)
-        if directory and not os.path.exists(directory):
-            os.makedirs(directory, exist_ok=True)
-            print(f"Created directory: {directory}")
+    # Define the complete directory structure for a Kubernetes project
+    # This is based on common K8s project layouts
+    project_structure = {
+        # Standard K8s directories
+        "deployments": {},
+        "services": {},
+        "configmaps": {},
+        "secrets": {},
+        "ingress": {},
+        "volumes": {},
+        
+        # Application code
+        "src": {
+            "app": {
+                "__init__.py": "",
+                "main.py": "# Main application code\n\ndef main():\n    print('Starting application')\n\nif __name__ == '__main__':\n    main()\n",
+                "config.py": "# Configuration settings\n\nAPP_NAME = 'gravel9-tilt'\n",
+                "utils": {
+                    "__init__.py": "",
+                    "helpers.py": "# Helper functions\n\ndef get_version():\n    return '0.1.0'\n"
+                }
+            },
+            "tests": {
+                "__init__.py": "",
+                "test_main.py": "# Test cases\n\ndef test_version():\n    from app.utils.helpers import get_version\n    assert get_version() == '0.1.0'\n"
+            }
+        },
+        
+        # Docker files
+        "Dockerfile": "FROM python:3.9-slim\n\nWORKDIR /app\nCOPY src/app /app\n\nRUN pip install --no-cache-dir -r requirements.txt\n\nCMD [\"python\", \"main.py\"]\n",
+        "docker-compose.yml": "version: '3'\n\nservices:\n  app:\n    build: .\n    ports:\n      - \"8080:8080\"\n",
+        
+        # CI/CD configuration
+        ".github": {
+            "workflows": {
+                "ci.yml": "name: CI\n\non: [push, pull_request]\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v2\n      - name: Build Docker image\n        run: docker build -t gravel9-tilt .\n"
+            }
+        },
+        
+        # Documentation
+        "docs": {
+            "README.md": f"# {project_name} Documentation\n\nDetailed documentation for the {project_name} project.\n",
+            "architecture.md": "# Architecture\n\nDescription of the system architecture.\n",
+            "api.md": "# API Reference\n\nAPI documentation.\n"
+        },
+        
+        # K8s deployment file
+        f"{project_name}-deployment.yaml": "\n".join(k8s_parts),
+        
+        # Project files
+        "requirements.txt": "fastapi==0.68.0\nuvicorn==0.15.0\npydantic==1.8.2\n",
+        ".gitignore": "__pycache__/\n*.py[cod]\n*$py.class\n.env\n.venv\nenv/\nvenv/\nENV/\n.idea/\n.vscode/\n",
+        "README.md": f"# {project_name}\n\nResonant node for veiled patterns and sovereign memory.\n\n## Components\n\n- Quantum Veil\n- Pattern Oracle\n- Memory Totem\n- Flywheel Controller\n- Symbolic Signal UI\n\n## Getting Started\n\nSee documentation in the `docs` directory.\n"
+    }
     
-    # Create folders first
-    print("Creating folder structure...")
+    # Create project structure
+    create_directory_structure(".", project_structure)
+    
+    # Also create basic folders from the folders list if they're not already created
     for folder in folders:
-        if isinstance(folder, str) and folder != ".":
+        if isinstance(folder, str) and folder != "." and not os.path.exists(folder):
             os.makedirs(folder, exist_ok=True)
-            print(f"Created folder: {folder}")
+            print(f"Created folder from folders list: {folder}")
     
-    # Create standard files
-    print("Creating standard files...")
+    # Create any additional files from the files list
     for file in files:
-        if isinstance(file, str):
-            if file == f"{project_name}-deployment.yaml" or file == "gravel9-tilt-deployment.yaml":
-                # Create deployment file with full Kubernetes content
-                ensure_directory(file)
-                with open(file, "w") as f:
-                    for part in k8s_parts:
-                        f.write(part + "\n")
-                print(f"Created deployment file: {file} ({os.path.getsize(file)} bytes)")
-            elif file == "README.md":
-                ensure_directory(file)
-                with open(file, "w") as f:
-                    f.write(f"# {project_name}\n\n")
-                    f.write("Resonant node for veiled patterns and sovereign memory.\n\n")
-                    f.write("## Components\n\n")
-                    f.write("- Quantum Veil\n")
-                    f.write("- Pattern Oracle\n")
-                    f.write("- Memory Totem\n")
-                    f.write("- Flywheel Controller\n")
-                    f.write("- Symbolic Signal UI\n")
-                print(f"Created README file: {file}")
-            else:
-                ensure_directory(file)
-                with open(file, "w") as f:
-                    pass
-                print(f"Created empty file: {file}")
+        if isinstance(file, str) and not os.path.exists(file):
+            if file != f"{project_name}-deployment.yaml" and file != "README.md":
+                create_file_with_content(file)
     
-    # Create source files
-    print("Creating source files...")
-    for source_file in source_files:
-        if isinstance(source_file, dict):
-            file_path = source_file.get('path', '')
-            content = source_file.get('content', '')
-            
-            if file_path:
-                ensure_directory(file_path)
-                with open(file_path, "w") as f:
-                    f.write(content)
-                print(f"Created source file: {file_path}")
-    
-    # Create config files
-    print("Creating config files...")
-    for config_file in config_files:
-        if isinstance(config_file, dict):
-            file_path = config_file.get('path', '')
-            content = config_file.get('content', '')
-            
-            if file_path:
-                ensure_directory(file_path)
-                with open(file_path, "w") as f:
-                    f.write(content)
-                print(f"Created config file: {file_path}")
-    
-    # Create test files
-    print("Creating test files...")
-    for test_file in test_files:
-        if isinstance(test_file, dict):
-            file_path = test_file.get('path', '')
-            content = test_file.get('content', '')
-            
-            if file_path:
-                ensure_directory(file_path)
-                with open(file_path, "w") as f:
-                    f.write(content)
-                print(f"Created test file: {file_path}")
-    
-    # Process any additional repository structure
-    # Add more sections here based on your spec.yaml structure
-    
-    # Print summary of created files
+    # Print summary
     file_count = len(os.popen('find . -type f | wc -l').read().strip())
     dir_count = len(os.popen('find . -type d | wc -l').read().strip())
     print(f"Repository created with {file_count} files and {dir_count} directories")
@@ -256,3 +270,4 @@ except Exception as e:
     import traceback
     traceback.print_exc()
     sys.exit(1)
+    
