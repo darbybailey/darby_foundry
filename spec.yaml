@@ -1,170 +1,171 @@
 repository:
-  name: entcypher
-  description: EntCypher - A personal entertainment data ownership system using semantic
-    cyphers for private engagement tracking with provider-compatible analytics
+  name: multipass
+  description: MultiPass - A personalized media wallet for Netflix, powering content recommendations, real-time streaming analytics, and performance visualizations for terrestrial and interplanetary streaming
   visibility: public
   license: MIT
   topics:
-  - entertainment-data
-  - privacy-tech
-  - semantic-cyphers
-  - digital-sovereignty
-  - engagement-analytics
-  - gamification
-  - entertainment-education
+    - personalization
+    - recommendation-system
+    - data-pipeline
+    - visualization
+    - kafka
+    - spark
+    - tensorflow
+    - reactjs
+    - netflix
+
 structure:
   components:
-  - name: core
-    description: Core system architecture and dual-key cryptography framework
-    language: python
-    files:
-    - entcypher/__init__.py
-    - entcypher/core/__init__.py
-    - entcypher/core/wallet.py
-    - entcypher/core/dual_encryption.py
-    - entcypher/core/semantic_cypher.py
-    - entcypher/core/data_model.py
-    - entcypher/core/translation_layer.py
-  - name: api
-    description: API layer for user controls and provider integration
-    language: python
-    files:
-    - entcypher/api/__init__.py
-    - entcypher/api/user_api.py
-    - entcypher/api/provider_api.py
-    - entcypher/api/metrics_api.py
-    - entcypher/api/auth.py
-    - entcypher/api/routes.py
-  - name: semantic
-    description: Semantic cypher system and gamification elements
-    language: python
-    files:
-    - entcypher/semantic/__init__.py
-    - entcypher/semantic/cypher_builder.py
-    - entcypher/semantic/pattern_recognition.py
-    - entcypher/semantic/symbolic_language.py
-    - entcypher/semantic/meaning_translation.py
-    - entcypher/semantic/gamification.py
-  - name: provider
-    description: Tools for entertainment providers to integrate with encrypted user
-      data
-    language: python
-    files:
-    - entcypher/provider/__init__.py
-    - entcypher/provider/metrics_extraction.py
-    - entcypher/provider/aggregate_analytics.py
-    - entcypher/provider/insights_generator.py
-    - entcypher/provider/integration_sdk.py
-  - name: app
-    description: User-facing application with Flutter for cross-platform support
-    language: dart/flutter
-    files:
-    - app/lib/main.dart
-    - app/lib/models/user_profile.dart
-    - app/lib/models/entertainment_entry.dart
-    - app/lib/screens/dashboard_screen.dart
-    - app/lib/screens/cypher_creation_screen.dart
-    - app/lib/screens/entertainment_log_screen.dart
-    - app/lib/screens/wallet_screen.dart
-    - app/lib/widgets/cypher_input_widget.dart
-    - app/lib/widgets/insights_visualization.dart
-    - app/lib/widgets/privacy_controls.dart
-    - app/pubspec.yaml
-  - name: web
-    description: Web dashboard for user data visualization and management
-    language: typescript/react
-    files:
-    - web/src/App.tsx
-    - web/src/components/Dashboard.tsx
-    - web/src/components/CypherBuilder.tsx
-    - web/src/components/EntertainmentLog.tsx
-    - web/src/components/PrivacyControls.tsx
-    - web/src/components/DataVisualization.tsx
-    - web/src/components/ProviderSettings.tsx
-    - web/package.json
-  - name: docs
-    description: Documentation for users, developers, and entertainment providers
-    language: markdown
-    files:
-    - docs/index.md
-    - docs/user_guide.md
-    - docs/developer_guide.md
-    - docs/provider_integration.md
-    - docs/privacy_model.md
-    - docs/semantic_cyphers.md
-    - docs/gamification.md
-    - docs/api_reference.md
+    - name: core
+      description: Core logic for recommendation engine and data processing
+      language: python
+      files:
+        - src/core/__init__.py
+        - src/core/recommendation_engine.py
+        - src/core/data_processor.py
+        - src/core/user_profile.py
+
+    - name: pipeline
+      description: Kafka and Spark pipeline for real-time streaming metrics processing
+      language: python
+      files:
+        - src/pipeline/__init__.py
+        - src/pipeline/kafka_producer.py
+        - src/pipeline/kafka_consumer.py
+        - src/pipeline/spark_analytics.py
+
+    - name: recommendation
+      description: TensorFlow-based multi-modal recommendation models
+      language: python
+      files:
+        - src/recommendation/__init__.py
+        - src/recommendation/model.py
+        - src/recommendation/training.py
+        - src/recommendation/feature_engineering.py
+
+    - name: api
+      description: FastAPI backend for serving recommendations and analytics
+      language: python
+      files:
+        - src/api/__init__.py
+        - src/api/main.py
+        - src/api/endpoints.py
+        - src/api/models.py
+
+    - name: frontend
+      description: React/D3.js dashboard for content performance analytics
+      language: typescript
+      files:
+        - src/frontend/index.html
+        - src/frontend/App.tsx
+        - src/frontend/Dashboard.tsx
+        - src/frontend/PerformanceViz.tsx
+        - src/frontend/EngagementViz.tsx
+        - src/frontend/PersonalizationViz.tsx
+        - src/frontend/styles.css
+
+    - name: storage
+      description: PostgreSQL/TimeScaleDB for storing streaming metrics and user data
+      language: sql
+      files:
+        - src/storage/schema.sql
+        - src/storage/queries.sql
+        - src/storage/migrations/001_init.sql
+
+    - name: docs
+      description: Documentation for MultiPass setup, algorithms, and analytics
+      language: markdown
+      files:
+        - docs/index.md
+        - docs/api.md
+        - docs/recommendation_guide.md
+        - docs/pipeline_setup.md
+        - docs/visualization_guide.md
+
+    - name: config
+      description: Configuration files for project setup and deployment
+      language: various
+      files:
+        - package.json
+        - requirements.txt
+        - .env.example
+        - docker-compose.yml
+        - kubernetes/deployment.yaml
+        - kubernetes/service.yaml
+        - .github/workflows/ci.yml
+
 features:
-- name: Dual-Purpose Encrypted Wallet
-  description: Entertainment data stored in a personal wallet using dual-key encryption
-    where users control private meaning while enabling provider analytics
-- name: Semantic Cypher Creation
-  description: Users create personalized symbolic languages to represent their entertainment
-    experiences, enabling expressive and private data recording
-- name: Translation Layer
-  description: Converts personal semantic cyphers into standardized metrics usable
-    by providers while preserving user privacy
-- name: Gamified Data Entry
-  description: Turn data ownership into an engaging experience through symbolic language
-    building and personal insight gathering
-- name: Provider Integration SDK
-  description: Tools for entertainment platforms to integrate with encrypted user
-    data for audience insights without compromising privacy
-- name: Cross-Platform Apps
-  description: Flutter mobile app and React web dashboard for managing entertainment
-    data across all devices
+  - name: personalized_recommendations
+    description: Multi-modal TensorFlow model for hyper-personalized content suggestions
+  - name: real_time_pipeline
+    description: Kafka/Spark pipeline processing 50M+ streaming metrics in real time
+  - name: performance_dashboard
+    description: React/D3.js visualizations for content performance and engagement metrics
+  - name: media_wallet
+    description: Universal personalization system for terrestrial and interplanetary streaming
+  - name: engagement_analytics
+    description: Real-time analytics for viewer behavior and content interaction
+  - name: entertainment_education
+    description: Leverages entertainment-education principles for engaging user experiences
+  - name: scalable_deployment
+    description: Docker/Kubernetes setup for production-grade scalability
+
 readme:
-  title: EntCypher
-  tagline: Own your entertainment data while enabling meaningful insights
+  title: MultiPass
+  tagline: A universal media wallet for personalized content streaming, from Earth to Mars
   sections:
-  - name: Overview
-    content: EntCypher is a secure entertainment data tracking system where users
-      maintain ownership while providers can access aggregated insights through semantic
-      translation layers.
-  - name: Core Components
-    content: '- Dual-key encrypted data wallet
+    - name: Overview
+      content: >
+        MultiPass is a futuristic content personalization platform combining TensorFlow-based recommendation systems, real-time Kafka/Spark pipelines, and retro-futuristic visual dashboards. Designed for Netflix-scale deployments, it brings cinematic user experiences to a new era of intelligent media streaming.
+    - name: Features
+      content: |
+        - Real-time content recommendations
+        - Kafka/Spark data pipeline for streaming metrics
+        - React/D3.js analytics dashboard
+        - Personalized user media wallet
+        - Cybernetics and entertainment-education integration
+    - name: Technologies Used
+      content: |
+        - Python 3.10+
+        - TensorFlow
+        - Apache Kafka
+        - Apache Spark
+        - FastAPI
+        - React.js + D3.js
+        - PostgreSQL + TimeScaleDB
+        - Docker + Kubernetes
+    - name: Getting Started
+      content: |
+        1. Clone the repository
+        2. Run `docker-compose up`
+        3. Visit `localhost:3000` for the dashboard
+        4. API docs at `localhost:8000/docs`
+    - name: License
+      content: MIT License — see LICENSE file for details
 
-      - Semantic cypher builder
-
-      - Gamification layer
-
-      - Provider analytics SDK
-
-      - Cross-platform interface'
-  - name: Technologies Used
-    content: '- Python 3.10+
-
-      - FastAPI
-
-      - SQLAlchemy
-
-      - PyNaCl
-
-      - Flutter
-
-      - React
-
-      - PostgreSQL'
-  - name: Getting Started
-    content: '1. Clone the repo
-
-      2. Configure `.env`
-
-      3. Start backend and frontend
-
-      4. Access dashboard at `localhost:3000`'
 files_content:
-  .env.example: 'DB_URL=postgres://user:pass@localhost/db
+  requirements.txt: |
+    tensorflow>=2.10
+    fastapi
+    uvicorn
+    kafka-python
+    pyspark
+    psycopg2
+    pydantic
+    python-dotenv
+    pandas
+    scikit-learn
 
-    SECRET_KEY=change_me
+  .env.example: |
+    DATABASE_URL=postgresql://user:pass@localhost/multipass
+    KAFKA_BROKER=localhost:9092
 
-    TRANSLATION_SERVICE=http://localhost:5000'
-  docs/index.md: '# EntCypher Documentation
+  docs/index.md: |
+    # MultiPass
 
-    Welcome to the EntCypher docs.'
-  docs/user_guide.md: '# User Guide
+    MultiPass is a personalized recommendation and analytics system designed for scalable streaming platforms like Netflix.
 
-    Learn how to use your semantic cypher wallet.'
-  docs/privacy_model.md: '# Privacy Model
-
-    Overview of encryption and privacy guarantees.'
+    Explore:
+    - `recommendation_guide.md` for model details
+    - `pipeline_setup.md` for Kafka/Spark configuration
+    - `visualization_guide.md` for dashboard usage
