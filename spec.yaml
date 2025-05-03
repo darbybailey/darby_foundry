@@ -1,171 +1,159 @@
 repository:
-  name: multipass
-  description: MultiPass - A personalized media wallet for Netflix, powering content recommendations, real-time streaming analytics, and performance visualizations for terrestrial and interplanetary streaming
+  name: vocalverse
+  description: VocalVerse - A singing AI voice machine for Mimi MAMEEN music, with
+    synthetic voice generation, full-spectrum audio board, and real-time tempo/pitch
+    control
   visibility: public
   license: MIT
   topics:
-    - personalization
-    - recommendation-system
-    - data-pipeline
-    - visualization
-    - kafka
-    - spark
-    - tensorflow
-    - reactjs
-    - netflix
-
+  - ai-voice
+  - audio-processing
+  - reactjs
+  - python
+  - tensorflow
+  - music-production
 structure:
   components:
-    - name: core
-      description: Core logic for recommendation engine and data processing
-      language: python
-      files:
-        - src/core/__init__.py
-        - src/core/recommendation_engine.py
-        - src/core/data_processor.py
-        - src/core/user_profile.py
-
-    - name: pipeline
-      description: Kafka and Spark pipeline for real-time streaming metrics processing
-      language: python
-      files:
-        - src/pipeline/__init__.py
-        - src/pipeline/kafka_producer.py
-        - src/pipeline/kafka_consumer.py
-        - src/pipeline/spark_analytics.py
-
-    - name: recommendation
-      description: TensorFlow-based multi-modal recommendation models
-      language: python
-      files:
-        - src/recommendation/__init__.py
-        - src/recommendation/model.py
-        - src/recommendation/training.py
-        - src/recommendation/feature_engineering.py
-
-    - name: api
-      description: FastAPI backend for serving recommendations and analytics
-      language: python
-      files:
-        - src/api/__init__.py
-        - src/api/main.py
-        - src/api/endpoints.py
-        - src/api/models.py
-
-    - name: frontend
-      description: React/D3.js dashboard for content performance analytics
-      language: typescript
-      files:
-        - src/frontend/index.html
-        - src/frontend/App.tsx
-        - src/frontend/Dashboard.tsx
-        - src/frontend/PerformanceViz.tsx
-        - src/frontend/EngagementViz.tsx
-        - src/frontend/PersonalizationViz.tsx
-        - src/frontend/styles.css
-
-    - name: storage
-      description: PostgreSQL/TimeScaleDB for storing streaming metrics and user data
-      language: sql
-      files:
-        - src/storage/schema.sql
-        - src/storage/queries.sql
-        - src/storage/migrations/001_init.sql
-
-    - name: docs
-      description: Documentation for MultiPass setup, algorithms, and analytics
-      language: markdown
-      files:
-        - docs/index.md
-        - docs/api.md
-        - docs/recommendation_guide.md
-        - docs/pipeline_setup.md
-        - docs/visualization_guide.md
-
-    - name: config
-      description: Configuration files for project setup and deployment
-      language: various
-      files:
-        - package.json
-        - requirements.txt
-        - .env.example
-        - docker-compose.yml
-        - kubernetes/deployment.yaml
-        - kubernetes/service.yaml
-        - .github/workflows/ci.yml
-
+  - name: voice_engine
+    description: Synthetic voice generation engine for singing vocals
+    language: python
+    files:
+    - src/voice_engine/__init__.py
+    - src/voice_engine/synthesizer.py
+    - src/voice_engine/trainer.py
+    - src/voice_engine/vocal_styles.json
+  - name: audio_board
+    description: React-based full-spectrum audio board for real-time waveform modulation
+    language: typescript
+    files:
+    - src/audio_board/index.html
+    - src/audio_board/AudioBoard.tsx
+    - src/audio_board/WaveformViz.tsx
+    - src/audio_board/EffectControls.tsx
+    - src/audio_board/styles.css
+  - name: controls
+    description: Granular controls for tempo, pitch, vibrato, and audio effects
+    language: python
+    files:
+    - src/controls/__init__.py
+    - src/controls/tempo_manager.py
+    - src/controls/pitch_modulator.py
+    - src/controls/effects_engine.py
+    - src/controls/parameters.json
+  - name: api
+    description: FastAPI backend for voice processing and audio board integration
+    language: python
+    files:
+    - src/api/__init__.py
+    - src/api/main.py
+    - src/api/endpoints.py
+    - src/api/models.py
+  - name: storage
+    description: SQLite for storing vocal presets and session data
+    language: sql
+    files:
+    - src/storage/schema.sql
+    - src/storage/queries.sql
+  - name: docs
+    description: Documentation for setup, usage, and music production workflow
+    language: markdown
+    files:
+    - docs/index.md
+    - docs/setup.md
+    - docs/voice_synthesis.md
+    - docs/audio_board_guide.md
+    - docs/control_parameters.md
+  - name: config
+    description: Configuration files for local development and deployment
+    language: various
+    files:
+    - package.json
+    - requirements.txt
+    - .env.example
+    - docker-compose.yml
 features:
-  - name: personalized_recommendations
-    description: Multi-modal TensorFlow model for hyper-personalized content suggestions
-  - name: real_time_pipeline
-    description: Kafka/Spark pipeline processing 50M+ streaming metrics in real time
-  - name: performance_dashboard
-    description: React/D3.js visualizations for content performance and engagement metrics
-  - name: media_wallet
-    description: Universal personalization system for terrestrial and interplanetary streaming
-  - name: engagement_analytics
-    description: Real-time analytics for viewer behavior and content interaction
-  - name: entertainment_education
-    description: Leverages entertainment-education principles for engaging user experiences
-  - name: scalable_deployment
-    description: Docker/Kubernetes setup for production-grade scalability
-
+- name: voice_synthesis
+  description: AI-driven singing voice generation with realistic tone and style
+- name: audio_board
+  description: Interactive full-spectrum audio board for waveform modulation
+- name: audio_controls
+  description: Real-time control over tempo, pitch, vibrato, volume, and effects
+- name: vocal_styles
+  description: Support for multiple vocal styles (pop, opera, trap) and languages
+- name: waveform_modulation
+  description: On-the-fly adjustments to timbre, harmonics, reverb, and distortion
+- name: session_management
+  description: Save and load vocal presets and session settings
+- name: music_production
+  description: Streamlined workflow for Mimi MAMEEN music creation
 readme:
-  title: MultiPass
-  tagline: A universal media wallet for personalized content streaming, from Earth to Mars
+  title: VocalVerse
+  tagline: The AI-powered singing machine built for Mimi MAMEEN music.
   sections:
-    - name: Overview
-      content: >
-        MultiPass is a futuristic content personalization platform combining TensorFlow-based recommendation systems, real-time Kafka/Spark pipelines, and retro-futuristic visual dashboards. Designed for Netflix-scale deployments, it brings cinematic user experiences to a new era of intelligent media streaming.
-    - name: Features
-      content: |
-        - Real-time content recommendations
-        - Kafka/Spark data pipeline for streaming metrics
-        - React/D3.js analytics dashboard
-        - Personalized user media wallet
-        - Cybernetics and entertainment-education integration
-    - name: Technologies Used
-      content: |
-        - Python 3.10+
-        - TensorFlow
-        - Apache Kafka
-        - Apache Spark
-        - FastAPI
-        - React.js + D3.js
-        - PostgreSQL + TimeScaleDB
-        - Docker + Kubernetes
-    - name: Getting Started
-      content: |
-        1. Clone the repository
-        2. Run `docker-compose up`
-        3. Visit `localhost:3000` for the dashboard
-        4. API docs at `localhost:8000/docs`
-    - name: License
-      content: MIT License — see LICENSE file for details
+  - name: Overview
+    content: VocalVerse empowers artists to generate and manipulate AI-driven vocals
+      with real-time controls and audio board visualization. Designed for professionals
+      seeking speed, control, and quality.
+  - name: Core Features
+    content: '- Voice synthesis with AI
 
+      - Real-time waveform visualization
+
+      - Full control over audio parameters
+
+      - Save/load session presets
+
+      - Vocal style customization'
+  - name: Setup
+    content: '1. Clone the repo
+
+      2. Run `docker-compose up`
+
+      3. Open http://localhost:3000 for frontend and http://localhost:8000/docs for
+      backend API'
+  - name: Technologies
+    content: '- TensorFlow
+
+      - FastAPI
+
+      - Web Audio API
+
+      - React + D3.js
+
+      - SQLite
+
+      - Docker'
+  - name: License
+    content: "MIT \u2014 See LICENSE file for details."
 files_content:
-  requirements.txt: |
-    tensorflow>=2.10
+  .env.example: 'VOICE_API_KEY=your_api_key
+
+    MODEL_PATH=models/default
+
+    AUDIO_SAMPLE_RATE=44100'
+  requirements.txt: 'tensorflow==2.12.0
+
     fastapi
+
     uvicorn
-    kafka-python
-    pyspark
-    psycopg2
-    pydantic
-    python-dotenv
-    pandas
-    scikit-learn
 
-  .env.example: |
-    DATABASE_URL=postgresql://user:pass@localhost/multipass
-    KAFKA_BROKER=localhost:9092
+    librosa
 
-  docs/index.md: |
-    # MultiPass
+    pyaudio
 
-    MultiPass is a personalized recommendation and analytics system designed for scalable streaming platforms like Netflix.
+    sqlalchemy'
+  docs/index.md: '# VocalVerse Documentation
 
-    Explore:
-    - `recommendation_guide.md` for model details
-    - `pipeline_setup.md` for Kafka/Spark configuration
-    - `visualization_guide.md` for dashboard usage
+    See setup.md to get started.'
+  docs/setup.md: '# Setup Guide
+
+    Follow the steps below to get started.'
+  docs/voice_synthesis.md: '# Voice Synthesis
+
+    Details on the AI voice generation engine.'
+  docs/audio_board_guide.md: '# Audio Board Guide
+
+    Learn how to use the waveform modulation tools.'
+  docs/control_parameters.md: '# Control Parameters
+
+    Documentation for tempo, pitch, vibrato, and effects control.'
