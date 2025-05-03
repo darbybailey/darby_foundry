@@ -1,149 +1,163 @@
 repository:
-  name: game-flix
-  description: Game-Flix - A cosmic astronaut leaderboard game with API-driven data feeds, AI host guidance, Web3 integration, and transmedia storytelling for Netflix's gaming universe
+  name: quantum-view
+  description: QuantumView - An Entertainment-Education Analytics Platform visualizing
+    content impact on learning and behavior, powered by real-time data pipelines and
+    predictive modeling
   visibility: public
   license: MIT
   topics:
-    - gaming
-    - d3js
-    - phaserjs
-    - nlp
-    - web3
-    - netflix
-    - visualization
-    - transmedia
-
+  - analytics
+  - visualization
+  - fastapi
+  - reactjs
+  - airflow
+  - timescaledb
+  - machine-learning
+  - netflix
 structure:
   components:
-    - name: core
-      description: Core game logic and API connectivity for real-time data feeds
-      language: python
-      files:
-        - src/core/__init__.py
-        - src/core/game_engine.py
-        - src/core/api_client.py
-        - src/core/data_feeds.py
-        - src/core/config.py
-    - name: frontend
-      description: Phaser.js gaming layer and D3.js visualizations for leaderboards and mission stats
-      language: typescript
-      files:
-        - src/frontend/index.html
-        - src/frontend/GameScene.tsx
-        - src/frontend/Leaderboard.tsx
-        - src/frontend/DataViz.tsx
-        - src/frontend/styles.css
-    - name: ai_host
-      description: NLP-driven AI host guide for cinematic gameplay narration
-      language: python
-      files:
-        - src/ai_host/__init__.py
-        - src/ai_host/nlp_guide.py
-        - src/ai_host/dialogue_manager.py
-        - src/ai_host/prompts.json
-    - name: auth
-      description: User authentication with MetaMask Web3 wallet and NFT reward integration
-      language: typescript
-      files:
-        - src/auth/AuthManager.tsx
-        - src/auth/MetaMaskConnector.tsx
-        - src/auth/UserProfile.tsx
-        - src/auth/memory_totem.sol
-    - name: api
-      description: REST API for game data, user scores, and transmedia narrative triggers
-      language: python
-      files:
-        - src/api/__init__.py
-        - src/api/endpoints.py
-        - src/api/transmedia.py
-        - src/api/narrative_triggers.json
-    - name: docs
-      description: Documentation for Game-Flix setup, API, and transmedia narrative
-      language: markdown
-      files:
-        - docs/index.md
-        - docs/api.md
-        - docs/transmedia_narrative.md
-        - docs/setup.md
-        - docs/web3_guide.md
-    - name: config
-      description: Configuration files for project setup and deployment
-      language: various
-      files:
-        - package.json
-        - requirements.txt
-        - .env.example
-        - docker-compose.yml
-        - .github/workflows/ci.yml
-
+  - name: core
+    description: Core backend logic for data processing and predictive modeling
+    language: python
+    files:
+    - src/core/__init__.py
+    - src/core/data_processor.py
+    - src/core/predictive_model.py
+    - src/core/engagement_metrics.py
+  - name: api
+    description: FastAPI backend for serving analytics and dashboard data
+    language: python
+    files:
+    - src/api/__init__.py
+    - src/api/main.py
+    - src/api/endpoints.py
+    - src/api/models.py
+  - name: frontend
+    description: React.js dashboard with D3.js for interactive visualizations
+    language: typescript
+    files:
+    - src/frontend/index.html
+    - src/frontend/App.tsx
+    - src/frontend/Dashboard.tsx
+    - src/frontend/EngagementViz.tsx
+    - src/frontend/RetentionViz.tsx
+    - src/frontend/styles.css
+  - name: airflow
+    description: Apache Airflow DAGs for orchestrating data pipeline workflows
+    language: python
+    files:
+    - src/airflow/dags/__init__.py
+    - src/airflow/dags/data_ingestion.py
+    - src/airflow/dags/model_training.py
+  - name: database
+    description: PostgreSQL/TimescaleDB schema and queries for time-series data
+    language: sql
+    files:
+    - src/database/schema.sql
+    - src/database/queries.sql
+    - src/database/migrations/001_init.sql
+  - name: docs
+    description: Documentation for QuantumView setup, analytics, and theory
+    language: markdown
+    files:
+    - docs/index.md
+    - docs/api.md
+    - docs/entertainment_education.md
+    - docs/setup.md
+    - docs/model_explanation.md
+  - name: config
+    description: Configuration files for project setup and deployment
+    language: various
+    files:
+    - package.json
+    - requirements.txt
+    - .env.example
+    - docker-compose.yml
+    - .github/workflows/ci.yml
 features:
-  - name: leaderboard
-    description: Real-time astronaut leaderboard with space mission and gaming stats
-  - name: api_connectivity
-    description: Integration with Launch Library, Abios, and Netflix proprietary game APIs
-  - name: ai_guide
-    description: NLP-driven AI host for cinematic gameplay guidance with Netflix-style storytelling
-  - name: web3_auth
-    description: MetaMask wallet login for secure user accounts and Memory Totem NFT rewards
-  - name: visualizations
-    description: D3.js dashboards for mission data, player rankings, and retro-futuristic analytics
-  - name: transmedia
-    description: Filmic narrative integration linking gameplay to Netflix's cinematic content
-  - name: memory_totem
-    description: Cosmic achievement system issuing NFT-based player milestones
-  - name: real_time_analytics
-    description: Apache Flink-inspired real-time game analytics for player engagement
-
+- name: interactive_dashboard
+  description: React.js and D3.js dashboard visualizing engagement across content
+    types
+- name: real_time_pipeline
+  description: FastAPI and Airflow pipeline processing 40M+ viewer interaction records
+- name: predictive_modeling
+  description: ML models forecasting viewer behavior based on content characteristics
+- name: retention_visualization
+  description: Visualizations showing educational content impact on viewer retention
+- name: time_series_storage
+  description: TimescaleDB for efficient storage and querying of time-series data
+- name: cybernetics_integration
+  description: Application of entertainment-education and cybernetics theory to analytics
 readme:
-  title: Game-Flix
-  tagline: A cosmic leaderboard game with AI storytelling and Web3 rewards
+  title: QuantumView
+  tagline: Visualize impact. Predict engagement. Learn with entertainment.
   sections:
-    - name: Overview
-      content: >
-        Game-Flix is a gamified entertainment universe that merges data-driven gameplay, Web3 rewards, and
-        AI-driven storytelling for an interactive leaderboard journey set in space.
-    - name: Features
-      content: |
-        - Real-time astronaut leaderboard
-        - API feeds from Launch Library and gaming APIs
-        - AI host narrator with cinematic storytelling
-        - MetaMask login and NFT-based Memory Totem system
-        - Transmedia narrative bridging games and Netflix films
-    - name: Technologies Used
-      content: |
-        - Python 3.10+
-        - FastAPI
-        - Phaser.js
-        - D3.js
-        - Web3.js / MetaMask
-        - PostgreSQL + Redis
-    - name: Getting Started
-      content: |
-        1. Clone the repository
-        2. Install Python dependencies: `pip install -r requirements.txt`
-        3. Run `docker-compose up`
-        4. Access the game at `localhost:3000` and API at `localhost:8000/docs`
-    - name: License
-      content: MIT License — see LICENSE file for details
+  - name: Overview
+    content: QuantumView enables education researchers and media producers to evaluate
+      how entertainment content impacts learning and behavioral outcomes.
+  - name: Features
+    content: '- Real-time analytics
 
+      - Predictive behavior modeling
+
+      - Viewer engagement tracking
+
+      - Time-series optimized storage
+
+      - D3.js dashboards'
+  - name: Technologies Used
+    content: '- Python 3.10+
+
+      - FastAPI
+
+      - Airflow
+
+      - TimescaleDB
+
+      - React.js
+
+      - D3.js'
+  - name: Getting Started
+    content: '1. Clone the repo
+
+      2. Run `docker-compose up`
+
+      3. Access dashboard at `localhost:3000`
+
+      4. API available at `localhost:8000/docs`'
+  - name: License
+    content: "MIT License \u2014 see LICENSE file for details"
 files_content:
-  .env.example: |
-    SECRET_KEY=your-secret
-    METAMASK_PUBLIC_KEY=0x123...
-    API_BASE_URL=https://api.launchlibrary.net
+  .env.example: 'DATABASE_URL=postgres://localhost:5432/quantumview
 
-  docs/index.md: |
-    # Game-Flix Documentation
+    API_KEY=your_api_key_here
 
-    Welcome to the Game-Flix developer and user documentation. This site contains all relevant guides for setup,
-    gameplay logic, transmedia triggers, and Web3 authentication.
+    FRONTEND_PORT=3000
 
-  requirements.txt: |
-    fastapi
-    uvicorn
-    requests
+    BACKEND_PORT=8000'
+  requirements.txt: 'fastapi
+
     sqlalchemy
-    redis
-    nltk
-    spacy
-    web3
+
+    psycopg2-binary
+
+    alembic
+
+    pydantic
+
+    uvicorn
+
+    airflow
+
+    pandas
+
+    scikit-learn
+
+    matplotlib
+
+    spacy'
+  docs/index.md: '# QuantumView Docs
+
+
+    Welcome to the QuantumView analytics platform. This documentation provides instructions
+    for setup, API usage, data modeling, and interpretation.'
