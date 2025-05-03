@@ -1,84 +1,82 @@
-# Game-Flix: A cosmic leaderboard game with cinematic storytelling and Web3 integration
+# QuantumView: Entertainment-Education Analytics with Predictive Modeling
 
 ---
 repository:
-  name: "game-flix"
-  description: "Game-Flix - A cosmic astronaut leaderboard game with API-driven data feeds, AI host guidance, Web3 integration, and transmedia storytelling for Netflix's gaming universe"
+  name: "quantum-view"
+  description: "QuantumView - An Entertainment-Education Analytics Platform visualizing content impact on learning and behavior, powered by real-time data pipelines and predictive modeling"
   visibility: "public"
   license: "MIT"
   topics:
-    - "gaming"
-    - "d3js"
-    - "phaserjs"
-    - "nlp"
-    - "web3"
-    - "netflix"
+    - "analytics"
     - "visualization"
-    - "transmedia"
+    - "fastapi"
+    - "reactjs"
+    - "airflow"
+    - "timescaledb"
+    - "machine-learning"
+    - "netflix"
 
 about:
-  tagline: "A cosmic gaming narrative where data meets drama"
-  logo: "assets/images/gameflix-logo.png"
-  banner: "assets/images/gameflix-banner.png"
+  tagline: "Visualizing learning through entertainment, powered by data"
+  logo: "assets/images/quantumview-logo.png"
+  banner: "assets/images/quantumview-banner.png"
 
 structure:
   components:
     - name: "core"
-      description: "Core game logic and API connectivity for real-time data feeds"
+      description: "Core backend logic for data processing and predictive modeling"
       language: "Python"
       files:
         - "src/core/__init__.py"
-        - "src/core/game_engine.py"
-        - "src/core/api_client.py"
-        - "src/core/data_feeds.py"
-        - "src/core/config.py"
-
-    - name: "frontend"
-      description: "Phaser.js gaming layer and D3.js visualizations for leaderboards and mission stats"
-      language: "TypeScript"
-      files:
-        - "src/frontend/index.html"
-        - "src/frontend/GameScene.tsx"
-        - "src/frontend/Leaderboard.tsx"
-        - "src/frontend/DataViz.tsx"
-        - "src/frontend/styles.css"
-
-    - name: "ai_host"
-      description: "NLP-driven AI host guide for cinematic gameplay narration"
-      language: "Python"
-      files:
-        - "src/ai_host/__init__.py"
-        - "src/ai_host/nlp_guide.py"
-        - "src/ai_host/dialogue_manager.py"
-        - "src/ai_host/prompts.json"
-
-    - name: "auth"
-      description: "User authentication with MetaMask Web3 wallet and NFT reward integration"
-      language: "TypeScript"
-      files:
-        - "src/auth/AuthManager.tsx"
-        - "src/auth/MetaMaskConnector.tsx"
-        - "src/auth/UserProfile.tsx"
-        - "src/auth/memory_totem.sol"
+        - "src/core/data_processor.py"
+        - "src/core/predictive_model.py"
+        - "src/core/engagement_metrics.py"
 
     - name: "api"
-      description: "REST API for game data, user scores, and transmedia narrative triggers"
+      description: "FastAPI backend for serving analytics and dashboard data"
       language: "Python"
       files:
         - "src/api/__init__.py"
+        - "src/api/main.py"
         - "src/api/endpoints.py"
-        - "src/api/transmedia.py"
-        - "src/api/narrative_triggers.json"
+        - "src/api/models.py"
+
+    - name: "frontend"
+      description: "React.js dashboard with D3.js for interactive visualizations"
+      language: "TypeScript"
+      files:
+        - "src/frontend/index.html"
+        - "src/frontend/App.tsx"
+        - "src/frontend/Dashboard.tsx"
+        - "src/frontend/EngagementViz.tsx"
+        - "src/frontend/RetentionViz.tsx"
+        - "src/frontend/styles.css"
+
+    - name: "airflow"
+      description: "Apache Airflow DAGs for orchestrating data pipeline workflows"
+      language: "Python"
+      files:
+        - "src/airflow/dags/__init__.py"
+        - "src/airflow/dags/data_ingestion.py"
+        - "src/airflow/dags/model_training.py"
+
+    - name: "database"
+      description: "PostgreSQL/TimescaleDB schema and queries for time-series data"
+      language: "SQL"
+      files:
+        - "src/database/schema.sql"
+        - "src/database/queries.sql"
+        - "src/database/migrations/001_init.sql"
 
     - name: "docs"
-      description: "Documentation for Game-Flix setup, API, and transmedia narrative"
+      description: "Documentation for QuantumView setup, analytics, and theory"
       language: "Markdown"
       files:
         - "docs/index.md"
         - "docs/api.md"
-        - "docs/transmedia_narrative.md"
+        - "docs/entertainment_education.md"
         - "docs/setup.md"
-        - "docs/web3_guide.md"
+        - "docs/model_explanation.md"
 
     - name: "config"
       description: "Configuration files for project setup and deployment"
@@ -87,54 +85,47 @@ structure:
         - "package.json"
         - "requirements.txt"
         - ".env.example"
+        - "docker-compose.yml"
         - ".github/workflows/ci.yml"
 
 features:
-  - name: "leaderboard"
-    description: "Real-time astronaut leaderboard with space mission and gaming stats"
+  - name: "interactive_dashboard"
+    description: "React.js and D3.js dashboard visualizing engagement across content types"
 
-  - name: "api_connectivity"
-    description: "Integration with Launch Library, Abios, and Netflix proprietary game APIs"
+  - name: "real_time_pipeline"
+    description: "FastAPI and Airflow pipeline processing 40M+ viewer interaction records"
 
-  - name: "ai_guide"
-    description: "NLP-driven AI host for cinematic gameplay guidance with Netflix-style storytelling"
+  - name: "predictive_modeling"
+    description: "ML models forecasting viewer behavior based on content characteristics"
 
-  - name: "web3_auth"
-    description: "MetaMask wallet login for secure user accounts and Memory Totem NFT rewards"
+  - name: "retention_visualization"
+    description: "Visualizations showing educational content impact on viewer retention"
 
-  - name: "visualizations"
-    description: "D3.js dashboards for mission data, player rankings, and retro-futuristic analytics"
+  - name: "time_series_storage"
+    description: "TimescaleDB for efficient storage and querying of time-series data"
 
-  - name: "transmedia"
-    description: "Filmic narrative integration linking gameplay to Netflix's cinematic content"
-
-  - name: "memory_totem"
-    description: "Cosmic achievement system issuing NFT-based player milestones"
-
-  - name: "real_time_analytics"
-    description: "Apache Flink-inspired real-time game analytics for player engagement"
+  - name: "cybernetics_integration"
+    description: "Application of entertainment-education and cybernetics theory to analytics"
 
 technologies:
   backend:
     - "Python 3.10+"
     - "FastAPI"
-    - "WebSockets"
+    - "Apache Airflow"
   frontend:
-    - "TypeScript"
-    - "Phaser.js"
+    - "React.js"
     - "D3.js"
-  blockchain:
-    - "Solidity"
-    - "MetaMask"
-    - "Web3.js"
-  analytics:
-    - "Apache Flink"
+  database:
     - "PostgreSQL"
+    - "TimescaleDB"
+  devops:
+    - "Docker"
+    - "GitHub Actions"
 
 testing:
   framework: "pytest"
   coverage_target: 85
   files:
-    - "tests/test_game_engine.py"
+    - "tests/test_data_processor.py"
+    - "tests/test_predictive_model.py"
     - "tests/test_api_endpoints.py"
-    - "tests/test_ai_guide.py"
