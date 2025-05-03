@@ -26,6 +26,39 @@ with open("spec.yaml", "r") as f:
 project_name = config["repository"]["name"]
 components = config.get("structure", {}).get("components", [])
 
+import openai
+
+openai.api_key = os.environ.get("OPENAI_API_KEY")  # Set this in GitHub Secrets
+
+def generate_from_prompt(prompt_text):
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt_text}],
+            temperature=0.7,
+            max_tokens=2048,
+        )
+        return response.choices[0].message["content"].strip()
+    except Exception as e:
+        print(f"⚠️ GPT error: {e}")
+        return ""
+
+# === AI README generation ===
+if "readme" in config and "prompt" in config["readme"]:
+    print("⚡ Generating README.md with GPT...")
+    content = generate_from_prompt(config["readme"]["prompt"])
+    with open("README.md", "w") as f:
+        f.write(content)
+
+# === AI Documentation generation ===
+for doc in config.get("docs_templates", []):
+    file_path = doc["file"]
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    print(f"⚡ Generating {file_path} with GPT...")
+    doc_content = generate_from_prompt(doc["prompt"])
+    with open(file_path, "w") as f:
+        f.write(doc_content)
+
 # Flatten files and folders
 files = []
 folders = set()
