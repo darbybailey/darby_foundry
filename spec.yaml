@@ -1,5 +1,5 @@
 repository:
-  name: hybrid-media-scaler
+  name: hybrid-media-scalar
   description: >
     HybridMediaScaler - A content delivery optimization system for video and audio
     with multilingual support, adaptive bitrate, and global CDN simulation.
