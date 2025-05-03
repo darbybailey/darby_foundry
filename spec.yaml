@@ -1,58 +1,140 @@
+# Game-Flix: A cosmic leaderboard game with cinematic storytelling and Web3 integration
+
 ---
 repository:
-  name: "mdvt"
-  description: "Multilingual Dubbing Visualization Tool for content producers"
+  name: "game-flix"
+  description: "Game-Flix - A cosmic astronaut leaderboard game with API-driven data feeds, AI host guidance, Web3 integration, and transmedia storytelling for Netflix's gaming universe"
   visibility: "public"
   license: "MIT"
   topics:
+    - "gaming"
     - "d3js"
+    - "phaserjs"
     - "nlp"
-    - "media"
+    - "web3"
+    - "netflix"
     - "visualization"
-    - "streaming"
+    - "transmedia"
+
+about:
+  tagline: "A cosmic gaming narrative where data meets drama"
+  logo: "assets/images/gameflix-logo.png"
+  banner: "assets/images/gameflix-banner.png"
 
 structure:
   components:
     - name: "core"
-      description: "Core NLP and translation engine"
+      description: "Core game logic and API connectivity for real-time data feeds"
       language: "Python"
       files:
         - "src/core/__init__.py"
-        - "src/core/nlp_processor.py"
-        - "src/core/translation_engine.py"
+        - "src/core/game_engine.py"
+        - "src/core/api_client.py"
+        - "src/core/data_feeds.py"
+        - "src/core/config.py"
 
     - name: "frontend"
-      description: "D3.js visualization dashboard"
+      description: "Phaser.js gaming layer and D3.js visualizations for leaderboards and mission stats"
       language: "TypeScript"
       files:
-        - "src/frontend/App.tsx"
-        - "src/frontend/Dashboard.tsx"
-        - "src/frontend/Flywheel.tsx"
+        - "src/frontend/index.html"
+        - "src/frontend/GameScene.tsx"
+        - "src/frontend/Leaderboard.tsx"
+        - "src/frontend/DataViz.tsx"
+        - "src/frontend/styles.css"
+
+    - name: "ai_host"
+      description: "NLP-driven AI host guide for cinematic gameplay narration"
+      language: "Python"
+      files:
+        - "src/ai_host/__init__.py"
+        - "src/ai_host/nlp_guide.py"
+        - "src/ai_host/dialogue_manager.py"
+        - "src/ai_host/prompts.json"
+
+    - name: "auth"
+      description: "User authentication with MetaMask Web3 wallet and NFT reward integration"
+      language: "TypeScript"
+      files:
+        - "src/auth/AuthManager.tsx"
+        - "src/auth/MetaMaskConnector.tsx"
+        - "src/auth/UserProfile.tsx"
+        - "src/auth/memory_totem.sol"
 
     - name: "api"
-      description: "API for integrating translation and visualization"
+      description: "REST API for game data, user scores, and transmedia narrative triggers"
       language: "Python"
       files:
         - "src/api/__init__.py"
         - "src/api/endpoints.py"
+        - "src/api/transmedia.py"
+        - "src/api/narrative_triggers.json"
 
     - name: "docs"
-      description: "Project documentation"
+      description: "Documentation for Game-Flix setup, API, and transmedia narrative"
       language: "Markdown"
       files:
         - "docs/index.md"
         - "docs/api.md"
+        - "docs/transmedia_narrative.md"
         - "docs/setup.md"
+        - "docs/web3_guide.md"
+
+    - name: "config"
+      description: "Configuration files for project setup and deployment"
+      language: "Various"
+      files:
+        - "package.json"
+        - "requirements.txt"
+        - ".env.example"
+        - ".github/workflows/ci.yml"
 
 features:
-  - name: "semantic-input"
-    description: "Natural language processing for dubbing instructions"
+  - name: "leaderboard"
+    description: "Real-time astronaut leaderboard with space mission and gaming stats"
 
-  - name: "visualization"
-    description: "Real-time D3.js dashboard for language completion and metrics"
+  - name: "api_connectivity"
+    description: "Integration with Launch Library, Abios, and Netflix proprietary game APIs"
 
-  - name: "flywheel"
-    description: "Interactive speed adjustment for language processing"
+  - name: "ai_guide"
+    description: "NLP-driven AI host for cinematic gameplay guidance with Netflix-style storytelling"
 
-  - name: "sentiment-analysis"
-    description: "Tone matching for dubbed content"
+  - name: "web3_auth"
+    description: "MetaMask wallet login for secure user accounts and Memory Totem NFT rewards"
+
+  - name: "visualizations"
+    description: "D3.js dashboards for mission data, player rankings, and retro-futuristic analytics"
+
+  - name: "transmedia"
+    description: "Filmic narrative integration linking gameplay to Netflix's cinematic content"
+
+  - name: "memory_totem"
+    description: "Cosmic achievement system issuing NFT-based player milestones"
+
+  - name: "real_time_analytics"
+    description: "Apache Flink-inspired real-time game analytics for player engagement"
+
+technologies:
+  backend:
+    - "Python 3.10+"
+    - "FastAPI"
+    - "WebSockets"
+  frontend:
+    - "TypeScript"
+    - "Phaser.js"
+    - "D3.js"
+  blockchain:
+    - "Solidity"
+    - "MetaMask"
+    - "Web3.js"
+  analytics:
+    - "Apache Flink"
+    - "PostgreSQL"
+
+testing:
+  framework: "pytest"
+  coverage_target: 85
+  files:
+    - "tests/test_game_engine.py"
+    - "tests/test_api_endpoints.py"
+    - "tests/test_ai_guide.py"
