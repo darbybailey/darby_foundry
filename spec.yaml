@@ -1,87 +1,136 @@
-#!/usr/bin/env python3
-"""
+# EntCypher: Personal Entertainment Data Sovereignty System
+# Repository specification for a personal data owned entertainment tracker with semantic cyphers
+
 ---
-Darby Foundry v0.2 - Fixed
+repository:
+  name: "entcypher"
+  description: "A personal entertainment data ownership system using semantic cyphers for private engagement tracking with provider-compatible analytics"
+  visibility: "public"
+  topics: 
+    - "entertainment-data"
+    - "privacy-tech"
+    - "semantic-cyphers"
+    - "digital-sovereignty"
+    - "engagement-analytics"
+    - "gamification"
+    - "entertainment-education"
+  license: "MIT"
 
-Builds a full repo from a spec.yaml file. This version:
-- Fully parses nested paths
-- Generates all declared files and folders
-- Logs build output
-"""
+about:
+  tagline: "Own your entertainment data while enabling meaningful insights"
+  logo: "assets/images/entcypher-logo.png"
+  banner: "assets/images/entcypher-banner.png"
 
-import os
-import sys
-import yaml
-import argparse
-import datetime
-from pathlib import Path
+structure:
+  components:
+    - name: "core"
+      description: "Core system architecture and dual-key cryptography framework"
+      language: "Python"
+      files:
+        - "entcypher/__init__.py"
+        - "entcypher/core/__init__.py"
+        - "entcypher/core/wallet.py"
+        - "entcypher/core/dual_encryption.py"
+        - "entcypher/core/semantic_cypher.py"
+        - "entcypher/core/data_model.py"
+        - "entcypher/core/translation_layer.py"
+        
+    - name: "api"
+      description: "API layer for user controls and provider integration"
+      language: "Python"
+      files:
+        - "entcypher/api/__init__.py"
+        - "entcypher/api/user_api.py"
+        - "entcypher/api/provider_api.py"
+        - "entcypher/api/metrics_api.py"
+        - "entcypher/api/auth.py"
+        - "entcypher/api/routes.py"
+        
+    - name: "semantic"
+      description: "Semantic cypher system and gamification elements"
+      language: "Python"
+      files:
+        - "entcypher/semantic/__init__.py"
+        - "entcypher/semantic/cypher_builder.py"
+        - "entcypher/semantic/pattern_recognition.py"
+        - "entcypher/semantic/symbolic_language.py"
+        - "entcypher/semantic/meaning_translation.py"
+        - "entcypher/semantic/gamification.py"
+        
+    - name: "provider"
+      description: "Tools for entertainment providers to integrate with encrypted user data"
+      language: "Python"
+      files:
+        - "entcypher/provider/__init__.py"
+        - "entcypher/provider/metrics_extraction.py"
+        - "entcypher/provider/aggregate_analytics.py"
+        - "entcypher/provider/insights_generator.py"
+        - "entcypher/provider/integration_sdk.py"
+        
+    - name: "app"
+      description: "User-facing application with Flutter for cross-platform support"
+      language: "Dart/Flutter"
+      files:
+        - "app/lib/main.dart"
+        - "app/lib/models/user_profile.dart"
+        - "app/lib/models/entertainment_entry.dart"
+        - "app/lib/screens/dashboard_screen.dart"
+        - "app/lib/screens/cypher_creation_screen.dart"
+        - "app/lib/screens/entertainment_log_screen.dart"
+        - "app/lib/screens/wallet_screen.dart"
+        - "app/lib/widgets/cypher_input_widget.dart"
+        - "app/lib/widgets/insights_visualization.dart"
+        - "app/lib/widgets/privacy_controls.dart"
+        - "app/pubspec.yaml"
+        
+    - name: "web"
+      description: "Web dashboard for user data visualization and management"
+      language: "TypeScript/React"
+      files:
+        - "web/src/App.tsx"
+        - "web/src/components/Dashboard.tsx"
+        - "web/src/components/CypherBuilder.tsx"
+        - "web/src/components/EntertainmentLog.tsx"
+        - "web/src/components/PrivacyControls.tsx"
+        - "web/src/components/DataVisualization.tsx"
+        - "web/src/components/ProviderSettings.tsx"
+        - "web/package.json"
+        
+    - name: "docs"
+      description: "Documentation for users, developers, and entertainment providers"
+      language: "Markdown"
+      files:
+        - "docs/index.md"
+        - "docs/user_guide.md"
+        - "docs/developer_guide.md"
+        - "docs/provider_integration.md"
+        - "docs/privacy_model.md"
+        - "docs/semantic_cyphers.md"
+        - "docs/gamification.md"
+        - "docs/api_reference.md"
 
-def load_spec(path):
-    with open(path, 'r') as f:
-        return yaml.safe_load(f)
+features:
+  - name: "Dual-Purpose Encrypted Wallet"
+    description: "Entertainment data stored in a personal wallet using dual-key encryption where users control private meaning while enabling provider analytics"
+    implementation: "entcypher/core/dual_encryption.py"
+    
+  - name: "Semantic Cypher Creation"
+    description: "Users create personalized symbolic languages to represent their entertainment experiences, enabling expressive and private data recording"
+    implementation: "entcypher/semantic/cypher_builder.py"
+    
+  - name: "Translation Layer"
+    description: "Converts personal semantic cyphers into standardized metrics usable by providers while preserving user privacy"
+    implementation: "entcypher/core/translation_layer.py"
+    
+  - name: "Gamified Data Entry"
+    description: "Turn data ownership into an engaging experience through symbolic language building and personal insight gathering"
+    implementation: "entcypher/semantic/gamification.py"
+    
+  - name: "Provider Integration SDK"
+    description: "Tools for entertainment platforms to integrate with encrypted user data for audience insights without compromising privacy"
+    implementation: "entcypher/provider/integration_sdk.py"
+    
+  - name: "Cross-Platform Apps"
+    description: "Flutter mobile app and React web dashboard for managing entertainment data across all devices"
+    implementation: "app/lib/main.dart"
 
-def create_file(path, header=""):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, 'w') as f:
-        f.write(header)
-
-def generate_file_content(file_path, component_name, description):
-    now = datetime.datetime.now().strftime("%Y-%m-%d")
-    ext = os.path.splitext(file_path)[1].lower()
-    basename = os.path.basename(file_path)
-    if ext == ".py":
-        class_name = ''.join(x.capitalize() for x in os.path.splitext(basename)[0].split('_'))
-        return f""""""
-{basename} - {description}
-Generated {now}
-""""""
-
-class {class_name}:
-    def __init__(self):
-        pass
-
-    def run(self):
-        print("Running {{self.__class__.__name__}}")
-"""
-    elif ext == ".md":
-        return f"# {component_name}\n\n{description}\n\nGenerated {now}\n"
-    elif ext in [".ts", ".tsx", ".js"]:
-        return f"// {basename} - {description}\n// Generated {now}\n"
-    elif ext == ".dart":
-        return f"// Dart file: {basename} - {description}\n// Generated {now}\n"
-    elif ext in [".yaml", ".yml", ".json"]:
-        return f"# {basename} - generated {now}\n"
-    else:
-        return f"# File: {basename} - generated {now}\n"
-
-def generate_all(spec, output_dir):
-    components = spec.get("structure", {}).get("components", [])
-    for component in components:
-        name = component.get("name")
-        desc = component.get("description", "")
-        files = component.get("files", [])
-        for f in files:
-            full_path = os.path.join(output_dir, f)
-            if not os.path.exists(full_path):
-                content = generate_file_content(f, name, desc)
-                create_file(full_path, content)
-                print(f"[+] Created {full_path}")
-            else:
-                print(f"[=] Skipped existing {full_path}")
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--spec', required=True, help='Path to spec.yaml')
-    parser.add_argument('--output-dir', default='./output', help='Directory to output files')
-    args = parser.parse_args()
-
-    try:
-        spec = load_spec(args.spec)
-        generate_all(spec, args.output_dir)
-        print("[✓] Build complete.")
-    except Exception as e:
-        print(f"[!] Error: {e}")
-        sys.exit(1)
-
-if __name__ == '__main__':
-    main()
