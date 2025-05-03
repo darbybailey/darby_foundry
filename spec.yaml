@@ -1,112 +1,157 @@
 repository:
-  name: familyjewel
-  description: FamilyJewel - A private Scottish-style family office app for Mimi MAMEEN,
-    tracking bank accounts, credit cards, crypto, and logins with local input, secure
-    Sentinel, and TILT gamified integration
-  visibility: private
+  name: kanban-scribe
+  description: KanbanScribe - A shared Google Sheets + AI-enhanced Kanban board and journal system for families and teams, syncing tasks, journaling, calendar events, and agile metrics with FamilyJewel Sentinel API compatibility.
+  visibility: public
   license: MIT
   topics:
-  - finance
-  - portfolio-management
-  - reactjs
-  - python
-  - d3js
-  - tilt
-  - security
+    - kanban
+    - google-sheets
+    - reactjs
+    - fastapi
+    - ai-journaling
+    - d3js
+    - calendar-integration
+    - family-productivity
+
 structure:
   components:
-  - name: core
-    description: Core logic for portfolio tracking, encryption, and calculations
-    language: python
-    files:
-    - src/core/__init__.py
-    - src/core/portfolio_manager.py
-    - src/core/data_encryptor.py
-    - src/core/asset_calculator.py
-    - src/core/update_tracker.py
-  - name: input
-    description: Manual text or speech input for asset values and market prices
-    language: python
-    files:
-    - src/input/__init__.py
-    - src/input/text_input.py
-    - src/input/speech_input.py
-    - src/input/price_input.py
-    - src/input/input_validator.py
-  - name: auth
-    description: Secure local storage for passwords and logins
-    language: python
-    files:
-    - src/auth/__init__.py
-    - src/auth/password_manager.py
-    - src/auth/login_store.py
-    - src/auth/password_generator.py
-  - name: dashboard
-    description: React/D3.js dashboard for portfolio visualization
-    language: typescript
-    files:
-    - src/dashboard/index.html
-    - src/dashboard/Dashboard.tsx
-    - src/dashboard/NetWorthViz.tsx
-    - src/dashboard/AssetAllocationViz.tsx
-    - src/dashboard/TrendsViz.tsx
-    - src/dashboard/styles.css
-  - name: sentinel
-    description: Local pass-through server for internet toggle and API logins
-    language: python
-    files:
-    - src/sentinel/__init__.py
-    - src/sentinel/sentinel.py
-    - src/sentinel/api_connector.py
-    - src/sentinel/login_automator.py
-  - name: chief_of_staff
-    description: Cloud-facing framework for API registry and TILT integration
-    language: python
-    files:
-    - src/chief_of_staff/__init__.py
-    - src/chief_of_staff/api_registry.py
-    - src/chief_of_staff/tilt_sync.py
-    - src/chief_of_staff/game_mechanics.py
-    - src/chief_of_staff/api_list.json
-  - name: storage
-    description: Encrypted SQLite for financial and login data
-    language: sql
-    files:
-    - src/storage/schema.sql
-    - src/storage/queries.sql
-  - name: docs
-    description: Documentation for setup, usage, and TILT integration
-    language: markdown
-    files:
-    - docs/index.md
-    - docs/setup.md
-    - docs/input_guide.md
-    - docs/dashboard_guide.md
-    - docs/sentinel_guide.md
-    - docs/tilt_integration.md
-  - name: config
-    description: Configuration files for local development
-    language: various
-    files:
-    - package.json
-    - requirements.txt
-    - .env.example
-    - docker-compose.yml
+    - name: core
+      description: Core logic for syncing, journaling, and Google Sheets task management
+      language: python
+      files:
+        - src/core/__init__.py
+        - src/core/sheet_sync.py
+        - src/core/task_parser.py
+        - src/core/calendar_linker.py
+        - src/core/journal_processor.py
+        - src/core/ai_connector.py
+        - src/core/agile_estimator.py
+
+    - name: frontend
+      description: React/D3.js Kanban board with visual metrics, tagging, and drag-and-drop
+      language: typescript
+      files:
+        - src/frontend/index.html
+        - src/frontend/App.tsx
+        - src/frontend/KanbanBoard.tsx
+        - src/frontend/TaskForm.tsx
+        - src/frontend/CalendarIntegration.tsx
+        - src/frontend/styles.css
+
+    - name: api
+      description: FastAPI backend for task data, journal entries, and FamilyJewel Sentinel integration
+      language: python
+      files:
+        - src/api/__init__.py
+        - src/api/main.py
+        - src/api/endpoints.py
+        - src/api/models.py
+        - src/api/sentinel_proxy.py
+
+    - name: sheets
+      description: Google Sheets Apps Script logic for syncing multiple family/team boards
+      language: javascript
+      files:
+        - src/sheets/appscript.gs
+        - src/sheets/validator.gs
+        - src/sheets/triggers.gs
+
+    - name: docs
+      description: Documentation for setup, journaling, Google Sheets, and API integrations
+      language: markdown
+      files:
+        - docs/index.md
+        - docs/setup.md
+        - docs/journaling.md
+        - docs/api_reference.md
+        - docs/calendar_sync.md
+        - docs/sentinel_integration.md
+
+    - name: config
+      description: Configuration and deployment scripts
+      language: various
+      files:
+        - package.json
+        - requirements.txt
+        - .env.example
+        - docker-compose.yml
+        - .github/workflows/ci.yml
+
 features:
-- name: ad_hoc_input
-  description: Manual text/speech input for assets and market prices with manual/automated
-    tagging
-- name: password_management
-  description: Secure local storage for account logins and passwords
-- name: master_dashboard
-  description: Offline D3.js dashboard for net worth, assets, and trends
-- name: internet_toggle
-  description: On/off switch for internet access via Sentinel
-- name: sentinel
-  description: Local server for secure API logins and external syncing
-- name: chief_of_staff
-  description: Cloud framework for API registry and TILT gamified integration
-- name: local_security
-  description: Encrypted SQLite storage for offline operation
-- name: family_office
-  description: Private hub for managing all financial assets
+  - name: google_sheets_sync
+    description: Sync tasks, due dates, and status with multiple Google Sheets via App Script
+  - name: drag_drop_kanban
+    description: Interactive Kanban board with drag-and-drop UI and family/team columns
+  - name: journaling_ai
+    description: Daily voice or text journal synced with task context and optional AI summaries
+  - name: agile_metrics
+    description: XS–XL estimations, team load tracking, and project budget logging
+  - name: calendar_integration
+    description: Export tasks and due dates to Google Calendar for family/team schedules
+  - name: sentinel_bridge
+    description: Proxy API module to bridge task summaries to FamilyJewel Sentinel for secure sync
+  - name: multi_user_boards
+    description: Support for multiple boards (e.g. per child/family member) across shared Google Sheets
+
+readme:
+  title: KanbanScribe
+  tagline: Google Sheets + AI-enhanced Kanban for families and teams, integrating journaling and calendar sync with secure Sentinel support
+  sections:
+    - name: Overview
+      content: >
+        KanbanScribe is a shared productivity system designed for families or teams. It combines Google Sheets syncing, a drag-and-drop Kanban board, journaling with optional AI analysis, and full calendar export functionality—while also integrating with the Sentinel module from FamilyJewel for secure local data workflows.
+    - name: Features
+      content: |
+        - Sync with multiple Google Sheets across family/team members
+        - Drag-and-drop Kanban interface with XS–XL agile tags
+        - Daily journal entry via text or speech with AI summary
+        - Secure FamilyJewel Sentinel bridge for offline financial sync
+        - Export to Google Calendar
+        - Team task load and effort tracking
+    - name: Technologies
+      content: |
+        - Python 3.10+ (FastAPI, gspread, openai, pandas)
+        - React.js + TypeScript
+        - D3.js for visualization
+        - Google Apps Script (sync & validation)
+        - SQLite (optional local cache)
+    - name: Getting Started
+      content: |
+        1. Clone the repo
+        2. Setup `.env` with Google credentials and OpenAI/Gemini key
+        3. Run `docker-compose up`
+        4. Access the dashboard at `http://localhost:3000`
+        5. Configure the Google Sheet sync via provided Apps Script
+    - name: Sentinel Integration
+      content: |
+        KanbanScribe can optionally sync high-level summaries (e.g. budget, time estimates) into FamilyJewel's local Sentinel module for secure planning insights.
+        Set the `FAMILYJEWEL_SENTINEL_URL` in `.env` to enable.
+    - name: License
+      content: MIT License — see LICENSE file for details
+
+files_content:
+  .env.example: |
+    GOOGLE_SHEETS_CREDENTIALS_JSON=your_json_here
+    OPENAI_API_KEY=your_openai_key
+    FAMILYJEWEL_SENTINEL_URL=http://localhost:8000/sync
+    PORT=8000
+
+  docs/index.md: |
+    # KanbanScribe
+
+    A visual, journal-integrated, Google-based task board for families and teams. Secure. Shareable. Smart.
+
+    See:
+    - `journaling.md` for daily journal use
+    - `calendar_sync.md` for Google Calendar export
+    - `sentinel_integration.md` to connect with FamilyJewel
+
+  docs/sentinel_integration.md: |
+    # Sentinel Bridge (FamilyJewel Integration)
+
+    This component syncs summary task metadata (e.g., hours, tags, budgets) with FamilyJewel's secure Sentinel API.
+    Configure with your local URL in `.env`. Data is anonymized and does not include full journal text.
+
+    Endpoints:
+    - `/sync/summary` (POST) — used by KanbanScribe
+    - `/sync/status` (GET) — Sentinel status check
