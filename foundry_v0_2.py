@@ -867,3 +867,45 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+    def _generate_components_list_markdown(self) -> str:
+    """Generate markdown list of components"""
+    if not self.spec.components:
+        logger.info("No components defined in spec")
+        return "No components defined."
+    
+    component_list = []
+    for component in self.spec.components:
+        if not isinstance(component, dict):
+            logger.warning(f"Skipping invalid component: {component}")
+            continue
+        name = component.get('name', 'unknown')
+        description = component.get('description', '')
+        try:
+            component_list.append(f"- **{name}**: {description}")
+        except Exception as e:
+            logger.error(f"Failed to format component {name}: {e}")
+            component_list.append(f"- **{name}**: Error in description")
+    
+    return "\n".join(component_list) if component_list else "No valid components defined."
+
+def _generate_features_list_markdown(self) -> str:
+    """Generate markdown list of features"""
+    if not self.spec.features:
+        logger.info("No features defined in spec")
+        return "No features defined."
+    
+    feature_list = []
+    for feature in self.spec.features:
+        if not isinstance(feature, dict):
+            logger.warning(f"Skipping invalid feature: {feature}")
+            continue
+        name = feature.get('name', 'unknown')
+        description = feature.get('description', '')
+        try:
+            feature_list.append(f"- **{name}**: {description}")
+        except Exception as e:
+            logger.error(f"Failed to format feature {name}: {e}")
+            feature_list.append(f"- **{name}**: Error in description")
+    
+    return "\n".join(feature_list) if feature_list else "No valid features defined."
