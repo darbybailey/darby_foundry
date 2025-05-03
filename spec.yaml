@@ -1,121 +1,158 @@
 repository:
-  name: mdvt
-  description: Multilingual Dubbing Visualization Tool for content producers
+  name: ai-companions
+  description: AI Companions - Modular persona-based AI system with customizable skins,
+    voice memory, and secure user journaling
   visibility: public
   license: MIT
   topics:
-    - d3js
-    - nlp
-    - media
-    - visualization
-    - streaming
-
+  - ai
+  - companions
+  - voice-interface
+  - journal
+  - nlp
+  - persona
+  - privacy
+  - react
+  - fastapi
 structure:
   components:
-    - name: core
-      description: Core NLP and translation engine
-      language: python
-      files:
-        - src/core/__init__.py
-        - src/core/nlp_processor.py
-        - src/core/translation_engine.py
-    - name: frontend
-      description: D3.js visualization dashboard
-      language: typescript
-      files:
-        - src/frontend/App.tsx
-        - src/frontend/Dashboard.tsx
-        - src/frontend/Flywheel.tsx
-    - name: api
-      description: API for integrating translation and visualization
-      language: python
-      files:
-        - src/api/__init__.py
-        - src/api/endpoints.py
-    - name: docs
-      description: Project documentation
-      language: markdown
-      files:
-        - docs/index.md
-        - docs/api.md
-        - docs/setup.md
-
+  - name: core
+    description: Core logic and persona orchestration engine
+    language: python
+    files:
+    - src/core/__init__.py
+    - src/core/persona_manager.py
+    - src/core/memory_engine.py
+    - src/core/skinning_engine.py
+  - name: api
+    description: FastAPI backend for companion API endpoints
+    language: python
+    files:
+    - src/api/__init__.py
+    - src/api/main.py
+    - src/api/endpoints.py
+    - src/api/models.py
+  - name: frontend
+    description: React-based interface with persona skins and journaling
+    language: typescript
+    files:
+    - src/frontend/index.html
+    - src/frontend/App.tsx
+    - src/frontend/PersonaSelector.tsx
+    - src/frontend/JournalInterface.tsx
+    - src/frontend/VoiceConsole.tsx
+    - src/frontend/styles.css
+  - name: persona
+    description: Customizable persona data and skins
+    language: json
+    files:
+    - src/persona/default.json
+    - src/persona/therapist.json
+    - src/persona/viking.json
+  - name: docs
+    description: Documentation for setup, API, and persona creation
+    language: markdown
+    files:
+    - docs/index.md
+    - docs/setup.md
+    - docs/api_reference.md
+    - docs/persona_creation.md
+    - docs/privacy.md
+  - name: config
+    description: Configuration and deployment
+    language: various
+    files:
+    - requirements.txt
+    - package.json
+    - .env.example
+    - docker-compose.yml
+    - .github/workflows/ci.yml
 features:
-  - name: semantic-input
-    description: Natural language processing for dubbing instructions
-  - name: visualization
-    description: Real-time D3.js dashboard for language completion and metrics
-  - name: flywheel
-    description: Interactive speed adjustment for language processing
-  - name: sentiment-analysis
-    description: Tone matching for dubbed content
-
+- name: persona_system
+  description: Create, customize, and select AI personas with unique behaviors and
+    styles
+- name: voice_memory
+  description: Journaling via voice input with memory tagging and emotional tone detection
+- name: privacy_mode
+  description: Client-side encryption and data sovereignty enforcement
+- name: journal_companion
+  description: Private journaling assistant with memory graph and longitudinal emotional
+    insights
+- name: skin_switching
+  description: UI skin and persona selector for immersive interaction
+- name: fastapi_backend
+  description: Secure backend for persona logic, journaling, and voice memory
+- name: react_frontend
+  description: Sleek, responsive frontend for user interaction
 readme:
-  title: Multilingual Dubbing Visualization Tool (MDVT)
-  tagline: Enhance dubbing workflows with real-time NLP and interactive dashboards
+  title: AI Companions
+  tagline: Modular persona-based journaling and interaction system with privacy-first
+    design
   sections:
-    - name: Overview
-      content: >
-        MDVT helps content producers and localizers manage multilingual dubbing projects with precision and speed.
-        It features NLP-powered translation, real-time sentiment analysis, and an interactive D3.js dashboard.
-    - name: Features
-      content: |
-        - Semantic NLP input for dubbing logic
-        - D3.js real-time visualization dashboard
-        - Interactive Flywheel control for adjusting processing speed
-        - Sentiment-aware tone matching for translated voiceovers
-    - name: Technologies Used
-      content: |
-        - Python 3.10+
-        - FastAPI
-        - D3.js
-        - TypeScript
-        - NLTK / SpaCy
-    - name: Getting Started
-      content: |
-        1. Clone this repository
-        2. Run `pip install -r requirements.txt`
-        3. Start the API with `uvicorn src.api.endpoints:app --reload`
-        4. Launch the frontend with `npm start` from `src/frontend`
-    - name: License
-      content: MIT License — see LICENSE file for details
+  - name: Overview
+    content: AI Companions provides a secure, expressive platform for interacting
+      with personalized AI personas, journaling via voice, and exploring emotional
+      patterns over time.
+  - name: Features
+    content: '- Persona system with modular skins
 
+      - Voice journaling with sentiment tagging
+
+      - Privacy-preserving storage
+
+      - FastAPI backend and React UI'
+  - name: Technologies
+    content: '- Python 3.10+
+
+      - FastAPI
+
+      - React/TypeScript
+
+      - NLP/SpaCy
+
+      - Docker/Kubernetes'
+  - name: Getting Started
+    content: '1. Clone the repo
+
+      2. Setup `.env` file
+
+      3. Run `docker-compose up`
+
+      4. Access UI on `localhost:3000`, API on `localhost:8000/docs`'
+  - name: License
+    content: "MIT License \u2014 see LICENSE for details"
 files_content:
-  .env.example: |
-    API_KEY=replace_this_key
-    TRANSLATION_ENDPOINT=https://api.translation.local
+  .env.example: 'API_KEY=your_api_key
 
-  requirements.txt: |
-    fastapi
+    VOICE_MEMORY_DIR=/data/memories
+
+    FRONTEND_URL=http://localhost:3000'
+  docs/index.md: '# AI Companions
+
+    This guide covers setup, personas, journaling tools, and system architecture.'
+  docs/setup.md: '## Setup
+
+    Use Docker Compose or manual setup to run backend and frontend services.'
+  docs/persona_creation.md: '## Persona Creation
+
+    Define persona behaviors, names, prompts, and tone inside JSON files in `src/persona/`.'
+  docs/api_reference.md: '## API Reference
+
+    FastAPI endpoints available at `/api/persona`, `/api/journal`, `/api/voice`.'
+  docs/privacy.md: '## Privacy Model
+
+    All memory data remains client-side encrypted. No personal data is stored on external
+    servers.'
+  requirements.txt: 'fastapi
+
     uvicorn
-    spacy
-    nltk
+
+    pydantic
+
     python-dotenv
 
-  docs/index.md: |
-    # MDVT Documentation
+    spacy
 
-    Welcome to the MDVT platform. This system provides tools to manage, analyze, and visualize dubbing translation workflows.
-
-    ## Modules
-    - Core: NLP and translation engine
-    - API: FastAPI backend for streaming endpoints
-    - Frontend: Interactive D3.js interface
-    - Flywheel: Dynamic visual language engine
-
-  docs/api.md: |
-    # MDVT API Reference
-
-    The API exposes the following endpoints:
-
-    - `/translate`: Accepts original lines and returns multilingual dubbing suggestions
-    - `/flywheel`: Triggers adjustments to dubbing speed
-    - `/sentiment`: Analyzes sentiment of input and maps tones to dubbed lines
-
-  docs/setup.md: |
-    # Setup Guide
-
-    1. Install dependencies
-    2. Configure environment variables
-    3. Run backend and frontend apps
-    4. Access dashboard at `localhost:3000`
+    torch'
+  package.json: '{ "name": "ai-companions", "version": "1.0.0", "scripts": { "start":
+    "react-scripts start" } }'
