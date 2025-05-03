@@ -1,158 +1,170 @@
 repository:
-  name: ai-companions
-  description: AI Companions - Modular persona-based AI system with customizable skins,
-    voice memory, and secure user journaling
+  name: entcypher
+  description: EntCypher - A personal entertainment data ownership system using semantic
+    cyphers for private engagement tracking with provider-compatible analytics
   visibility: public
   license: MIT
   topics:
-  - ai
-  - companions
-  - voice-interface
-  - journal
-  - nlp
-  - persona
-  - privacy
-  - react
-  - fastapi
+  - entertainment-data
+  - privacy-tech
+  - semantic-cyphers
+  - digital-sovereignty
+  - engagement-analytics
+  - gamification
+  - entertainment-education
 structure:
   components:
   - name: core
-    description: Core logic and persona orchestration engine
+    description: Core system architecture and dual-key cryptography framework
     language: python
     files:
-    - src/core/__init__.py
-    - src/core/persona_manager.py
-    - src/core/memory_engine.py
-    - src/core/skinning_engine.py
+    - entcypher/__init__.py
+    - entcypher/core/__init__.py
+    - entcypher/core/wallet.py
+    - entcypher/core/dual_encryption.py
+    - entcypher/core/semantic_cypher.py
+    - entcypher/core/data_model.py
+    - entcypher/core/translation_layer.py
   - name: api
-    description: FastAPI backend for companion API endpoints
+    description: API layer for user controls and provider integration
     language: python
     files:
-    - src/api/__init__.py
-    - src/api/main.py
-    - src/api/endpoints.py
-    - src/api/models.py
-  - name: frontend
-    description: React-based interface with persona skins and journaling
-    language: typescript
+    - entcypher/api/__init__.py
+    - entcypher/api/user_api.py
+    - entcypher/api/provider_api.py
+    - entcypher/api/metrics_api.py
+    - entcypher/api/auth.py
+    - entcypher/api/routes.py
+  - name: semantic
+    description: Semantic cypher system and gamification elements
+    language: python
     files:
-    - src/frontend/index.html
-    - src/frontend/App.tsx
-    - src/frontend/PersonaSelector.tsx
-    - src/frontend/JournalInterface.tsx
-    - src/frontend/VoiceConsole.tsx
-    - src/frontend/styles.css
-  - name: persona
-    description: Customizable persona data and skins
-    language: json
+    - entcypher/semantic/__init__.py
+    - entcypher/semantic/cypher_builder.py
+    - entcypher/semantic/pattern_recognition.py
+    - entcypher/semantic/symbolic_language.py
+    - entcypher/semantic/meaning_translation.py
+    - entcypher/semantic/gamification.py
+  - name: provider
+    description: Tools for entertainment providers to integrate with encrypted user
+      data
+    language: python
     files:
-    - src/persona/default.json
-    - src/persona/therapist.json
-    - src/persona/viking.json
+    - entcypher/provider/__init__.py
+    - entcypher/provider/metrics_extraction.py
+    - entcypher/provider/aggregate_analytics.py
+    - entcypher/provider/insights_generator.py
+    - entcypher/provider/integration_sdk.py
+  - name: app
+    description: User-facing application with Flutter for cross-platform support
+    language: dart/flutter
+    files:
+    - app/lib/main.dart
+    - app/lib/models/user_profile.dart
+    - app/lib/models/entertainment_entry.dart
+    - app/lib/screens/dashboard_screen.dart
+    - app/lib/screens/cypher_creation_screen.dart
+    - app/lib/screens/entertainment_log_screen.dart
+    - app/lib/screens/wallet_screen.dart
+    - app/lib/widgets/cypher_input_widget.dart
+    - app/lib/widgets/insights_visualization.dart
+    - app/lib/widgets/privacy_controls.dart
+    - app/pubspec.yaml
+  - name: web
+    description: Web dashboard for user data visualization and management
+    language: typescript/react
+    files:
+    - web/src/App.tsx
+    - web/src/components/Dashboard.tsx
+    - web/src/components/CypherBuilder.tsx
+    - web/src/components/EntertainmentLog.tsx
+    - web/src/components/PrivacyControls.tsx
+    - web/src/components/DataVisualization.tsx
+    - web/src/components/ProviderSettings.tsx
+    - web/package.json
   - name: docs
-    description: Documentation for setup, API, and persona creation
+    description: Documentation for users, developers, and entertainment providers
     language: markdown
     files:
     - docs/index.md
-    - docs/setup.md
+    - docs/user_guide.md
+    - docs/developer_guide.md
+    - docs/provider_integration.md
+    - docs/privacy_model.md
+    - docs/semantic_cyphers.md
+    - docs/gamification.md
     - docs/api_reference.md
-    - docs/persona_creation.md
-    - docs/privacy.md
-  - name: config
-    description: Configuration and deployment
-    language: various
-    files:
-    - requirements.txt
-    - package.json
-    - .env.example
-    - docker-compose.yml
-    - .github/workflows/ci.yml
 features:
-- name: persona_system
-  description: Create, customize, and select AI personas with unique behaviors and
-    styles
-- name: voice_memory
-  description: Journaling via voice input with memory tagging and emotional tone detection
-- name: privacy_mode
-  description: Client-side encryption and data sovereignty enforcement
-- name: journal_companion
-  description: Private journaling assistant with memory graph and longitudinal emotional
-    insights
-- name: skin_switching
-  description: UI skin and persona selector for immersive interaction
-- name: fastapi_backend
-  description: Secure backend for persona logic, journaling, and voice memory
-- name: react_frontend
-  description: Sleek, responsive frontend for user interaction
+- name: Dual-Purpose Encrypted Wallet
+  description: Entertainment data stored in a personal wallet using dual-key encryption
+    where users control private meaning while enabling provider analytics
+- name: Semantic Cypher Creation
+  description: Users create personalized symbolic languages to represent their entertainment
+    experiences, enabling expressive and private data recording
+- name: Translation Layer
+  description: Converts personal semantic cyphers into standardized metrics usable
+    by providers while preserving user privacy
+- name: Gamified Data Entry
+  description: Turn data ownership into an engaging experience through symbolic language
+    building and personal insight gathering
+- name: Provider Integration SDK
+  description: Tools for entertainment platforms to integrate with encrypted user
+    data for audience insights without compromising privacy
+- name: Cross-Platform Apps
+  description: Flutter mobile app and React web dashboard for managing entertainment
+    data across all devices
 readme:
-  title: AI Companions
-  tagline: Modular persona-based journaling and interaction system with privacy-first
-    design
+  title: EntCypher
+  tagline: Own your entertainment data while enabling meaningful insights
   sections:
   - name: Overview
-    content: AI Companions provides a secure, expressive platform for interacting
-      with personalized AI personas, journaling via voice, and exploring emotional
-      patterns over time.
-  - name: Features
-    content: '- Persona system with modular skins
+    content: EntCypher is a secure entertainment data tracking system where users
+      maintain ownership while providers can access aggregated insights through semantic
+      translation layers.
+  - name: Core Components
+    content: '- Dual-key encrypted data wallet
 
-      - Voice journaling with sentiment tagging
+      - Semantic cypher builder
 
-      - Privacy-preserving storage
+      - Gamification layer
 
-      - FastAPI backend and React UI'
-  - name: Technologies
+      - Provider analytics SDK
+
+      - Cross-platform interface'
+  - name: Technologies Used
     content: '- Python 3.10+
 
       - FastAPI
 
-      - React/TypeScript
+      - SQLAlchemy
 
-      - NLP/SpaCy
+      - PyNaCl
 
-      - Docker/Kubernetes'
+      - Flutter
+
+      - React
+
+      - PostgreSQL'
   - name: Getting Started
     content: '1. Clone the repo
 
-      2. Setup `.env` file
+      2. Configure `.env`
 
-      3. Run `docker-compose up`
+      3. Start backend and frontend
 
-      4. Access UI on `localhost:3000`, API on `localhost:8000/docs`'
-  - name: License
-    content: "MIT License \u2014 see LICENSE for details"
+      4. Access dashboard at `localhost:3000`'
 files_content:
-  .env.example: 'API_KEY=your_api_key
+  .env.example: 'DB_URL=postgres://user:pass@localhost/db
 
-    VOICE_MEMORY_DIR=/data/memories
+    SECRET_KEY=change_me
 
-    FRONTEND_URL=http://localhost:3000'
-  docs/index.md: '# AI Companions
+    TRANSLATION_SERVICE=http://localhost:5000'
+  docs/index.md: '# EntCypher Documentation
 
-    This guide covers setup, personas, journaling tools, and system architecture.'
-  docs/setup.md: '## Setup
+    Welcome to the EntCypher docs.'
+  docs/user_guide.md: '# User Guide
 
-    Use Docker Compose or manual setup to run backend and frontend services.'
-  docs/persona_creation.md: '## Persona Creation
+    Learn how to use your semantic cypher wallet.'
+  docs/privacy_model.md: '# Privacy Model
 
-    Define persona behaviors, names, prompts, and tone inside JSON files in `src/persona/`.'
-  docs/api_reference.md: '## API Reference
-
-    FastAPI endpoints available at `/api/persona`, `/api/journal`, `/api/voice`.'
-  docs/privacy.md: '## Privacy Model
-
-    All memory data remains client-side encrypted. No personal data is stored on external
-    servers.'
-  requirements.txt: 'fastapi
-
-    uvicorn
-
-    pydantic
-
-    python-dotenv
-
-    spacy
-
-    torch'
-  package.json: '{ "name": "ai-companions", "version": "1.0.0", "scripts": { "start":
-    "react-scripts start" } }'
+    Overview of encryption and privacy guarantees.'
