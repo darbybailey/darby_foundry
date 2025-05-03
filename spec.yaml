@@ -1,820 +1,895 @@
-project_name: gravel9-tilt
+
+project_name: ai-companions
 folders:
-- .
+  - src
+  - public
+  - docs
+  - tests
+  - .github
 files:
-- gravel9-tilt-deployment.yaml
-- README.md
+  - README.md
+  - package.json
+  - tsconfig.json
+  - .gitignore
+  - LICENSE
+  - ai-companions-deployment.yaml
 options:
+  visibility: public
+  description: "A framework for building AI companions that users can talk to and interact with through a web application plugin."
   git_init: true
-  license: proprietary
-  visibility: private
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: gravel9-tilt
-  labels:
-    name: gravel9-tilt
-  annotations:
-    description: "Resonant node for veiled patterns and sovereign memory"
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: gravel9-secrets
-  namespace: gravel9-tilt
-type: Opaque
-stringData:
-  EVA_ACCESS_KEY: "REDACTED"
-  NODE_PATTERN_SALT: "entropy-salt-seed-v9"
-  QUANTUM_AUTH_TOKEN: "veil-access-v0"
-  OBSERVABILITY_TOKEN: "grafana-hidden-v1"
-  SYMBOLIC_TRACE_KEY: "ritual-v0"
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gravel9-config
-  namespace: gravel9-tilt
-data:
-  NODE_MODE: "resonant"
-  OBSERVABILITY_MODE: "true"
-  TILT_VERSION: "v0.0.1"
-  QUANTUM_TEST_MODE: "true"
-  GRAFANA_DASHBOARD_ENABLED: "true"
-  LICENSE_BEACON: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - PROPRIETARY - ALL RIGHTS RESERVED"
-  TAGLINE: "This is a sovereign symbolic node."
-  CONTACT: "Dr. Darby Bailey McDonough"
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: grafana-dashboards
-  namespace: gravel9-tilt
-data:
-  quantum-veil-patterns.json: |
-    {
-      "title": "Veil Patterns",
-      "type": "heatmap",
-      "targets": [
+  license: MIT
+
+repo_structure:
+  # Core application structure
+  frontend:
+    src:
+      components:
+        - CompanionAvatar.tsx: |
+            import React from 'react';
+            
+            interface CompanionAvatarProps {
+              name: string;
+              imageSrc: string;
+              status: 'online' | 'thinking' | 'offline';
+            }
+            
+            export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({ 
+              name, 
+              imageSrc, 
+              status 
+            }) => {
+              return (
+                <div className="companion-avatar">
+                  <div className={`status-indicator ${status}`}></div>
+                  <img src={imageSrc} alt={`${name} avatar`} />
+                  <h3>{name}</h3>
+                </div>
+              );
+            };
+        - ChatInterface.tsx: |
+            import React, { useState } from 'react';
+            
+            interface ChatInterfaceProps {
+              companionId: string;
+              onSendMessage: (message: string) => Promise<void>;
+            }
+            
+            export const ChatInterface: React.FC<ChatInterfaceProps> = ({
+              companionId,
+              onSendMessage
+            }) => {
+              const [message, setMessage] = useState('');
+              
+              const handleSubmit = async (e: React.FormEvent) => {
+                e.preventDefault();
+                if (message.trim()) {
+                  await onSendMessage(message);
+                  setMessage('');
+                }
+              };
+              
+              return (
+                <div className="chat-interface">
+                  <div className="message-container">
+                    {/* Messages will be rendered here */}
+                  </div>
+                  <form onSubmit={handleSubmit}>
+                    <input
+                      type="text"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Type your message..."
+                    />
+                    <button type="submit">Send</button>
+                  </form>
+                </div>
+              );
+            };
+        - CompanionSelector.tsx: |
+            import React from 'react';
+            import { CompanionAvatar } from './CompanionAvatar';
+            
+            interface Companion {
+              id: string;
+              name: string;
+              imageSrc: string;
+              status: 'online' | 'thinking' | 'offline';
+              description: string;
+            }
+            
+            interface CompanionSelectorProps {
+              companions: Companion[];
+              onSelect: (companionId: string) => void;
+            }
+            
+            export const CompanionSelector: React.FC<CompanionSelectorProps> = ({
+              companions,
+              onSelect
+            }) => {
+              return (
+                <div className="companion-selector">
+                  <h2>Choose Your AI Companion</h2>
+                  <div className="companions-grid">
+                    {companions.map(companion => (
+                      <div 
+                        key={companion.id} 
+                        className="companion-card"
+                        onClick={() => onSelect(companion.id)}
+                      >
+                        <CompanionAvatar
+                          name={companion.name}
+                          imageSrc={companion.imageSrc}
+                          status={companion.status}
+                        />
+                        <p>{companion.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            };
+
+      hooks:
+        - useCompanion.ts: |
+            import { useState, useEffect } from 'react';
+            import { CompanionAPI } from '../services/CompanionAPI';
+            
+            export interface Message {
+              id: string;
+              text: string;
+              sender: 'user' | 'companion';
+              timestamp: Date;
+            }
+            
+            export const useCompanion = (companionId: string) => {
+              const [messages, setMessages] = useState<Message[]>([]);
+              const [isLoading, setIsLoading] = useState(false);
+              const [error, setError] = useState<string | null>(null);
+              
+              const sendMessage = async (text: string) => {
+                try {
+                  setIsLoading(true);
+                  setError(null);
+                  
+                  // Add user message to chat
+                  const userMessage: Message = {
+                    id: Date.now().toString(),
+                    text,
+                    sender: 'user',
+                    timestamp: new Date()
+                  };
+                  
+                  setMessages(prev => [...prev, userMessage]);
+                  
+                  // Get companion response
+                  const response = await CompanionAPI.sendMessage(companionId, text);
+                  
+                  // Add companion response to chat
+                  const companionMessage: Message = {
+                    id: response.id,
+                    text: response.text,
+                    sender: 'companion',
+                    timestamp: new Date(response.timestamp)
+                  };
+                  
+                  setMessages(prev => [...prev, companionMessage]);
+                } catch (err) {
+                  setError('Failed to send message. Please try again.');
+                  console.error(err);
+                } finally {
+                  setIsLoading(false);
+                }
+              };
+              
+              return {
+                messages,
+                isLoading,
+                error,
+                sendMessage
+              };
+            };
+
+      services:
+        - CompanionAPI.ts: |
+            export interface CompanionResponse {
+              id: string;
+              text: string;
+              timestamp: string;
+            }
+            
+            export class CompanionAPI {
+              private static baseUrl = '/api/companions';
+              
+              static async getCompanions() {
+                const response = await fetch(`${this.baseUrl}`);
+                if (!response.ok) {
+                  throw new Error('Failed to fetch companions');
+                }
+                return response.json();
+              }
+              
+              static async getCompanionById(id: string) {
+                const response = await fetch(`${this.baseUrl}/${id}`);
+                if (!response.ok) {
+                  throw new Error(`Failed to fetch companion with ID: ${id}`);
+                }
+                return response.json();
+              }
+              
+              static async sendMessage(companionId: string, text: string): Promise<CompanionResponse> {
+                const response = await fetch(`${this.baseUrl}/${companionId}/messages`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ text })
+                });
+                
+                if (!response.ok) {
+                  throw new Error('Failed to send message');
+                }
+                
+                return response.json();
+              }
+            }
+
+      models:
+        - Companion.ts: |
+            export interface Companion {
+              id: string;
+              name: string;
+              imageSrc: string;
+              description: string;
+              personality: string;
+              status: 'online' | 'thinking' | 'offline';
+              metadata: Record<string, any>;
+            }
+            
+            export interface CompanionPersonality {
+              traits: string[];
+              background: string;
+              interests: string[];
+              conversationStyle: string;
+            }
+
+      utils:
+        - formatters.ts: |
+            export const formatTimestamp = (date: Date): string => {
+              return new Intl.DateTimeFormat('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+              }).format(date);
+            };
+
+      pages:
+        - CompanionChat.tsx: |
+            import React, { useState, useEffect } from 'react';
+            import { useParams } from 'react-router-dom';
+            import { ChatInterface } from '../components/ChatInterface';
+            import { CompanionAvatar } from '../components/CompanionAvatar';
+            import { useCompanion } from '../hooks/useCompanion';
+            import { CompanionAPI } from '../services/CompanionAPI';
+            import { Companion } from '../models/Companion';
+            
+            export const CompanionChat: React.FC = () => {
+              const { companionId } = useParams<{ companionId: string }>();
+              const [companion, setCompanion] = useState<Companion | null>(null);
+              const { messages, isLoading, error, sendMessage } = useCompanion(companionId || '');
+              
+              useEffect(() => {
+                const fetchCompanion = async () => {
+                  try {
+                    const data = await CompanionAPI.getCompanionById(companionId || '');
+                    setCompanion(data);
+                  } catch (err) {
+                    console.error('Failed to fetch companion:', err);
+                  }
+                };
+                
+                if (companionId) {
+                  fetchCompanion();
+                }
+              }, [companionId]);
+              
+              if (!companion) {
+                return <div>Loading companion...</div>;
+              }
+              
+              return (
+                <div className="companion-chat-page">
+                  <div className="companion-header">
+                    <CompanionAvatar
+                      name={companion.name}
+                      imageSrc={companion.imageSrc}
+                      status={isLoading ? 'thinking' : companion.status}
+                    />
+                    <p>{companion.description}</p>
+                  </div>
+                  
+                  <ChatInterface
+                    companionId={companionId || ''}
+                    onSendMessage={sendMessage}
+                  />
+                  
+                  {error && <div className="error-message">{error}</div>}
+                </div>
+              );
+            };
+
+  # Backend API components
+  backend:
+    src:
+      controllers:
+        - companionController.ts: |
+            import { Request, Response } from 'express';
+            import { CompanionService } from '../services/companionService';
+            
+            export class CompanionController {
+              static async getCompanions(req: Request, res: Response) {
+                try {
+                  const companions = await CompanionService.getCompanions();
+                  res.json(companions);
+                } catch (error) {
+                  res.status(500).json({ error: 'Failed to fetch companions' });
+                }
+              }
+              
+              static async getCompanionById(req: Request, res: Response) {
+                try {
+                  const { id } = req.params;
+                  const companion = await CompanionService.getCompanionById(id);
+                  
+                  if (!companion) {
+                    return res.status(404).json({ error: 'Companion not found' });
+                  }
+                  
+                  res.json(companion);
+                } catch (error) {
+                  res.status(500).json({ error: 'Failed to fetch companion' });
+                }
+              }
+              
+              static async sendMessage(req: Request, res: Response) {
+                try {
+                  const { id } = req.params;
+                  const { text } = req.body;
+                  
+                  if (!text) {
+                    return res.status(400).json({ error: 'Message text is required' });
+                  }
+                  
+                  const response = await CompanionService.sendMessage(id, text);
+                  res.json(response);
+                } catch (error) {
+                  res.status(500).json({ error: 'Failed to process message' });
+                }
+              }
+            }
+
+      services:
+        - companionService.ts: |
+            import { CompanionRepository } from '../repositories/companionRepository';
+            import { AIService } from './aiService';
+            
+            export class CompanionService {
+              static async getCompanions() {
+                return CompanionRepository.findAll();
+              }
+              
+              static async getCompanionById(id: string) {
+                return CompanionRepository.findById(id);
+              }
+              
+              static async sendMessage(companionId: string, text: string) {
+                // Get companion data to personalize response
+                const companion = await CompanionRepository.findById(companionId);
+                
+                if (!companion) {
+                  throw new Error('Companion not found');
+                }
+                
+                // Generate AI response based on companion personality
+                const response = await AIService.generateResponse(text, companion);
+                
+                // Save conversation history
+                await CompanionRepository.saveMessage(companionId, {
+                  text,
+                  sender: 'user',
+                  timestamp: new Date().toISOString()
+                });
+                
+                await CompanionRepository.saveMessage(companionId, {
+                  text: response.text,
+                  sender: 'companion',
+                  timestamp: new Date().toISOString()
+                });
+                
+                return {
+                  id: Date.now().toString(),
+                  text: response.text,
+                  timestamp: new Date().toISOString()
+                };
+              }
+            }
+
+        - aiService.ts: |
+            import { Companion } from '../models/Companion';
+            
+            interface AIResponse {
+              text: string;
+            }
+            
+            export class AIService {
+              static async generateResponse(userInput: string, companion: Companion): Promise<AIResponse> {
+                // This is where you would integrate with an LLM API like OpenAI, Claude, etc.
+                // For now, we'll implement a simple echo response
+                
+                // Create a prompt based on companion personality
+                const prompt = `
+                  You are ${companion.name}, with the following personality:
+                  ${companion.personality}
+                  
+                  User says: ${userInput}
+                  
+                  Respond as ${companion.name}:
+                `;
+                
+                try {
+                  // Call to AI service would go here
+                  // const aiResponse = await callExternalAIService(prompt);
+                  
+                  // Mock response for now
+                  const response = {
+                    text: `[${companion.name}] I heard you say: "${userInput}". This is a placeholder response.`
+                  };
+                  
+                  return response;
+                } catch (error) {
+                  console.error('Error generating AI response:', error);
+                  return {
+                    text: "I'm having trouble processing your message right now. Can we try again?"
+                  };
+                }
+              }
+            }
+
+      repositories:
+        - companionRepository.ts: |
+            import { Companion } from '../models/Companion';
+            
+            interface Message {
+              text: string;
+              sender: 'user' | 'companion';
+              timestamp: string;
+            }
+            
+            // Mock in-memory storage
+            const companions: Companion[] = [
+              {
+                id: 'assistant',
+                name: 'Assistant',
+                imageSrc: '/images/assistant.png',
+                description: 'A helpful and knowledgeable assistant.',
+                personality: 'Friendly, helpful, knowledgeable, and patient.',
+                status: 'online',
+                metadata: {}
+              },
+              {
+                id: 'counselor',
+                name: 'Counselor',
+                imageSrc: '/images/counselor.png',
+                description: 'An empathetic counselor who listens and offers guidance.',
+                personality: 'Empathetic, understanding, wise, and supportive.',
+                status: 'online',
+                metadata: {}
+              },
+              {
+                id: 'creative',
+                name: 'Creative',
+                imageSrc: '/images/creative.png',
+                description: 'A creative companion with a vivid imagination.',
+                personality: 'Creative, imaginative, artistic, and expressive.',
+                status: 'online',
+                metadata: {}
+              }
+            ];
+            
+            const conversations: Record<string, Message[]> = {};
+            
+            export class CompanionRepository {
+              static async findAll(): Promise<Companion[]> {
+                return [...companions];
+              }
+              
+              static async findById(id: string): Promise<Companion | undefined> {
+                return companions.find(companion => companion.id === id);
+              }
+              
+              static async saveMessage(companionId: string, message: Message): Promise<void> {
+                if (!conversations[companionId]) {
+                  conversations[companionId] = [];
+                }
+                
+                conversations[companionId].push(message);
+              }
+              
+              static async getConversation(companionId: string): Promise<Message[]> {
+                return conversations[companionId] || [];
+              }
+            }
+
+      models:
+        - Companion.ts: |
+            export interface Companion {
+              id: string;
+              name: string;
+              imageSrc: string;
+              description: string;
+              personality: string;
+              status: 'online' | 'thinking' | 'offline';
+              metadata: Record<string, any>;
+            }
+
+  # Configuration files
+  config:
+    - tsconfig.json: |
         {
-          "expr": "rate(lattice_steps_total[5m])",
-          "format": "time_series"
+          "compilerOptions": {
+            "target": "es6",
+            "lib": ["dom", "dom.iterable", "esnext"],
+            "allowJs": true,
+            "skipLibCheck": true,
+            "esModuleInterop": true,
+            "allowSyntheticDefaultImports": true,
+            "strict": true,
+            "forceConsistentCasingInFileNames": true,
+            "noFallthroughCasesInSwitch": true,
+            "module": "esnext",
+            "moduleResolution": "node",
+            "resolveJsonModule": true,
+            "isolatedModules": true,
+            "noEmit": true,
+            "jsx": "react-jsx"
+          },
+          "include": ["src"]
         }
-      ],
-      "visualization": "lattice_flow"
-    }
-  oracle-entropy.json: |
-    {
-      "title": "Oracle Entropy",
-      "type": "graph",
-      "targets": [
+        
+    - package.json: |
         {
-          "expr": "entropy_metrics",
-          "format": "time_series"
+          "name": "ai-companions",
+          "version": "0.1.0",
+          "private": true,
+          "dependencies": {
+            "express": "^4.18.2",
+            "react": "^18.2.0",
+            "react-dom": "^18.2.0",
+            "react-router-dom": "^6.10.0",
+            "typescript": "^4.9.5"
+          },
+          "scripts": {
+            "start": "react-scripts start",
+            "build": "react-scripts build",
+            "test": "react-scripts test",
+            "eject": "react-scripts eject",
+            "server": "ts-node src/server.ts"
+          },
+          "devDependencies": {
+            "@types/express": "^4.17.17",
+            "@types/node": "^16.18.23",
+            "@types/react": "^18.0.35",
+            "@types/react-dom": "^18.0.11",
+            "ts-node": "^10.9.1"
+          }
         }
-      ],
-      "visualization": "flywheel_drift"
-    }
-  memory-totem-signals.json: |
-    {
-      "title": "Symbolic Signals",
-      "type": "stat",
-      "targets": [
+        
+    - .gitignore: |
+        # dependencies
+        /node_modules
+        /.pnp
+        .pnp.js
+        
+        # testing
+        /coverage
+        
+        # production
+        /build
+        
+        # misc
+        .DS_Store
+        .env.local
+        .env.development.local
+        .env.test.local
+        .env.production.local
+        
+        npm-debug.log*
+        yarn-debug.log*
+        yarn-error.log*
+        
+    - .env.example: |
+        PORT=3000
+        AI_API_KEY=your_api_key_here
+        NODE_ENV=development
+
+  # Documentation
+  docs:
+    - README.md: |
+        # AI Companions API Documentation
+        
+        This documentation covers the API endpoints available for the AI Companions platform.
+        
+        ## Endpoints
+        
+        ### GET /api/companions
+        
+        Retrieves a list of all available AI companions.
+        
+        **Response:**
+        ```json
+        [
+          {
+            "id": "assistant",
+            "name": "Assistant",
+            "imageSrc": "/images/assistant.png",
+            "description": "A helpful and knowledgeable assistant.",
+            "status": "online"
+          },
+          ...
+        ]
+        ```
+        
+        ### GET /api/companions/:id
+        
+        Retrieves information about a specific companion.
+        
+        **Response:**
+        ```json
         {
-          "expr": "sum(symbolic_ritual_events_total)",
-          "format": "time_series"
+          "id": "assistant",
+          "name": "Assistant",
+          "imageSrc": "/images/assistant.png",
+          "description": "A helpful and knowledgeable assistant.",
+          "status": "online",
+          "personality": "Friendly, helpful, knowledgeable, and patient.",
+          "metadata": {}
         }
-      ],
-      "visualization": "influence_ring"
+        ```
+        
+        ### POST /api/companions/:id/messages
+        
+        Sends a message to a companion and receives a response.
+        
+        **Request Body:**
+        ```json
+        {
+          "text": "Hello, how are you today?"
+        }
+        ```
+        
+        **Response:**
+        ```json
+        {
+          "id": "123456789",
+          "text": "I'm doing well, thank you! How can I help you today?",
+          "timestamp": "2025-05-02T12:34:56.789Z"
+        }
+        ```
+        
+    - CONTRIBUTING.md: |
+        # Contributing to AI Companions
+        
+        Thank you for your interest in contributing to the AI Companions project! This document provides guidelines for contributing to this project.
+        
+        ## Getting Started
+        
+        1. Fork the repository
+        2. Clone your fork: `git clone https://github.com/your-username/ai-companions.git`
+        3. Create a new branch: `git checkout -b feature/your-feature-name`
+        4. Install dependencies: `npm install`
+        
+        ## Development Workflow
+        
+        1. Make your changes
+        2. Run tests: `npm test`
+        3. Submit a pull request
+        
+        ## Code Style
+        
+        We use ESLint and Prettier to maintain code quality. Please ensure your code follows these guidelines.
+        
+        ## Adding New Companions
+        
+        To add a new AI companion:
+        
+        1. Create a new companion profile in `src/data/companions.ts`
+        2. Add an avatar image in the `public/images` directory
+        3. Update the companion repository with your new companion
+        4. Add appropriate tests
+        
+        ## License
+        
+        By contributing to this project, you agree that your contributions will be licensed under the project's MIT license.
+        
+    - ARCHITECTURE.md: |
+        # AI Companions Architecture
+        
+        This document outlines the architecture of the AI Companions platform.
+        
+        ## Overview
+        
+        The AI Companions platform is built with a React frontend and Node.js/Express backend, using TypeScript throughout. It provides a framework for creating and interacting with AI companions that have distinct personalities and capabilities.
+        
+        ## Frontend Architecture
+        
+        The frontend is built using React with TypeScript and follows a component-based architecture.
+        
+        ### Key Components
+        
+        - **CompanionSelector**: Allows users to browse and select companions
+        - **ChatInterface**: Provides the messaging interface for communicating with companions
+        - **CompanionAvatar**: Displays the companion's avatar image and status
+        
+        ### State Management
+        
+        We use React hooks for state management, with custom hooks like `useCompanion` to handle conversation state and API interactions.
+        
+        ## Backend Architecture
+        
+        The backend uses Express.js with TypeScript and follows a layered architecture.
+        
+        ### Layers
+        
+        1. **Controllers**: Handle HTTP requests and responses
+        2. **Services**: Contain business logic
+        3. **Repositories**: Handle data access and persistence
+        4. **Models**: Define data structures
+        
+        ### AI Integration
+        
+        The `AIService` connects to external AI providers to generate companion responses based on:
+        
+        - The user's input
+        - The companion's personality profile
+        - Conversation history
+        
+        ## Data Flow
+        
+        1. User selects a companion
+        2. User sends a message via the ChatInterface
+        3. Message is sent to the backend API
+        4. CompanionService processes the message
+        5. AIService generates a response
+        6. Response is saved and returned to the frontend
+        7. Frontend displays the response in the ChatInterface
+
+  # Main README.md content
+  README.md: |
+    # AI Companions 🤖 👾 👻
+    
+    AI Companions is a framework for building interactive, personalized AI characters that users can talk to and interact with through a web application plugin.
+    
+    ## 🌟 Features
+    
+    - **Multiple AI Personalities**: Create different AI companions with unique personalities, knowledge domains, and interaction styles
+    - **Real-time Chat Interface**: A responsive and intuitive chat interface for seamless conversations
+    - **Customizable Avatars**: Assign custom avatars to each AI companion
+    - **Extensible Framework**: Easily add new companions or extend existing ones
+    - **Conversation History**: Maintains context across conversations
+    - **TypeScript Support**: Fully typed for better development experience
+    - **Responsive Design**: Works on mobile, tablet, and desktop devices
+    
+    ## 🚀 Getting Started
+    
+    ### Prerequisites
+    
+    - Node.js 14.x or later
+    - npm or yarn
+    
+    ### Installation
+    
+    1. Clone the repository:
+    
+    ```
+    git clone https://github.com/your-username/ai-companions.git
+    cd ai-companions
+    ```
+    
+    2. Install dependencies:
+    
+    ```
+    npm install
+    ```
+    
+    3. Create a `.env` file based on `.env.example`:
+    
+    ```
+    cp .env.example .env
+    ```
+    
+    4. Start the development server:
+    
+    ```
+    npm run dev
+    ```
+    
+    The application will be available at `http://localhost:3000`
+    
+    ## 🧠 AI Integration
+    
+    This framework can connect to various AI providers:
+    
+    - OpenAI (GPT-4, GPT-3.5)
+    - Anthropic Claude
+    - Other compatible LLM APIs
+    
+    To configure your AI provider, update the settings in the `.env` file.
+    
+    ## 🎭 Creating Custom Companions
+    
+    Create new AI companions by adding entries to the companion repository:
+    
+    1. Define a new companion in `src/repositories/companionRepository.ts`
+    2. Add an avatar image in `public/images`
+    3. Customize the personality, description, and other attributes
+    
+    For example:
+    
+    ```typescript
+    {
+      id: 'detective',
+      name: 'Detective Holmes',
+      imageSrc: '/images/detective.png',
+      description: 'A brilliant detective who helps solve mysteries.',
+      personality: 'Analytical, observant, logical, and slightly eccentric.',
+      status: 'online',
+      metadata: {
+        specialties: ['deduction', 'observation', 'crime solving']
+      }
     }
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: prometheus-config
-  namespace: gravel9-tilt
-data:
-  prometheus.yml: |
-    global:
-      scrape_interval: 15s
-    scrape_configs:
-      - job_name: 'gravel9-tilt'
-        kubernetes_sd_configs:
-        - role: pod
-          namespaces:
-            names:
-            - gravel9-tilt
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: fluentd-config
-  namespace: gravel9-tilt
-data:
-  fluentd.conf: |
-    <source>
-      @type forward
-      port 24224
-      bind 0.0.0.0
-    </source>
+    ```
     
-    <filter **>
-      @type record_transformer
-      enable_ruby
-      <record>
-        symbolic_tag ${record["message"].match(/entropy|pattern/) ? "ritual" : "system"}
-        trace_id ${record["trace_id"] || SecureRandom.uuid}
-      </record>
-    </filter>
+    ## 🧩 Project Structure
     
-    <match system.**>
-      @type elasticsearch
-      host elasticsearch
-      port 9200
-      index_name gravel9-logs
-    </match>
+    ```
+    ai-companions/
+    ├── src/
+    │   ├── components/      # React components
+    │   ├── hooks/           # Custom React hooks
+    │   ├── services/        # API services
+    │   ├── models/          # TypeScript interfaces
+    │   ├── pages/           # Page components
+    │   ├── utils/           # Utility functions
+    │   ├── repositories/    # Data repositories
+    │   └── controllers/     # API controllers
+    ├── public/              # Static assets
+    ├── docs/                # Documentation
+    └── tests/               # Test files
+    ```
     
-    <match quantum.**>
-      @type elasticsearch
-      host elasticsearch
-      port 9200
-      index_name gravel9-quantum
-    </match>
+    ## 📖 Documentation
     
-    <match ritual.**>
-      @type elasticsearch
-      host elasticsearch
-      port 9200
-      index_name gravel9-symbolic
-    </match>
----
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  name: flywheelpatterns.gravel9.tilt
-spec:
-  group: gravel9.tilt
-  names:
-    kind: FlywheelPattern
-    plural: flywheelpatterns
-    singular: flywheelpattern
-  scope: Namespaced
-  versions:
-  - name: v1
-    served: true
-    storage: true
-    schema:
-      openAPIV3Schema:
-        type: object
-        properties:
-          spec:
-            type: object
-            properties:
-              symbolicThreshold:
-                type: string
-                description: "Threshold for symbolic pattern activation"
-              targetPods:
-                type: integer
-                description: "Number of pods to spin up"
-              patternTag:
-                type: string
-                description: "Tag for pattern classification"
-            required:
-            - symbolicThreshold
-            - targetPods
-    subresources:
-      status: {}
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: gravel9-tilt-core
-  namespace: gravel9-tilt
-  labels:
-    app: gravel9-tilt
-    component: core
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: gravel9-tilt
-      component: core
-  template:
-    metadata:
-      labels:
-        app: gravel9-tilt
-        component: core
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9009"
-    spec:
-      containers:
-      - name: tilt-core-node
-        image: gravel9/tilt-core-node:latest
-        ports:
-        - containerPort: 9009
-        envFrom:
-        - configMapRef:
-            name: gravel9-config
-        - secretRef:
-            name: gravel9-secrets
-        volumeMounts:
-        - name: ritual-cache
-          mountPath: /var/ritual
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1024Mi"
-            cpu: "1000m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 9009
-          initialDelaySeconds: 15
-          periodSeconds: 10
-      volumes:
-      - name: ritual-cache
-        persistentVolumeClaim:
-          claimName: ritual-cache-pvc
-      imagePullSecrets:
-      - name: gravel9-registry
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: quantum-veil
-  namespace: gravel9-tilt
-  labels:
-    app: gravel9-tilt
-    component: quantum
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: gravel9-tilt
-      component: quantum
-  template:
-    metadata:
-      labels:
-        app: gravel9-tilt
-        component: quantum
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9109"
-    spec:
-      containers:
-      - name: quantum-veil-sim
-        image: gravel9/quantum-veil:latest
-        ports:
-        - containerPort: 9109
-        envFrom:
-        - configMapRef:
-            name: gravel9-config
-        - secretRef:
-            name: gravel9-secrets
-        resources:
-          limits:
-            memory: "2Gi"
-            cpu: "2000m"
-          requests:
-            memory: "1Gi"
-            cpu: "1000m"
-        securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
-        livenessProbe:
-          httpGet:
-            path: /veil-status
-            port: 9109
-          initialDelaySeconds: 30
-          periodSeconds: 15
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            preference:
-              matchExpressions:
-              - key: node.kubernetes.io/high-memory
-                operator: Exists
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: pattern-oracle
-  namespace: gravel9-tilt
-  labels:
-    app: gravel9-tilt
-    component: oracle
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: gravel9-tilt
-      component: oracle
-  template:
-    metadata:
-      labels:
-        app: gravel9-tilt
-        component: oracle
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9209"
-    spec:
-      containers:
-      - name: oracle-core
-        image: gravel9/pattern-oracle:latest
-        ports:
-        - containerPort: 9209
-        envFrom:
-        - configMapRef:
-            name: gravel9-config
-        - secretRef:
-            name: gravel9-secrets
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
-        livenessProbe:
-          httpGet:
-            path: /oracle-health
-            port: 9209
-          initialDelaySeconds: 15
-          periodSeconds: 10
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: memory-totem
-  namespace: gravel9-tilt
-  labels:
-    app: gravel9-tilt
-    component: totem
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: gravel9-tilt
-      component: totem
-  template:
-    metadata:
-      labels:
-        app: gravel9-tilt
-        component: totem
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9313"
-    spec:
-      containers:
-      - name: symbolic-index
-        image: gravel9/memory-totem:latest
-        ports:
-        - containerPort: 9313
-        envFrom:
-        - configMapRef:
-            name: gravel9-config
-        - secretRef:
-            name: gravel9-secrets
-        volumeMounts:
-        - name: symbolic-memory
-          mountPath: /var/symbolic
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /totem-status
-            port: 9313
-          initialDelaySeconds: 20
-          periodSeconds: 10
-      volumes:
-      - name: symbolic-memory
-        persistentVolumeClaim:
-          claimName: symbolic-memory-pvc
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: flywheel-controller
-  namespace: gravel9-tilt
-  labels:
-    app: gravel9-tilt
-    component: flywheel
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: gravel9-tilt
-      component: flywheel
-  template:
-    metadata:
-      labels:
-        app: gravel9-tilt
-        component: flywheel
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9413"
-    spec:
-      containers:
-      - name: mesh-spinner
-        image: gravel9/flywheel-controller:latest
-        ports:
-        - containerPort: 9413
-        envFrom:
-        - configMapRef:
-            name: gravel9-config
-        - secretRef:
-            name: gravel9-secrets
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /spinner-status
-            port: 9413
-          initialDelaySeconds: 20
-          periodSeconds: 10
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: symbolic-signal-ui
-  namespace: gravel9-tilt
-  labels:
-    app: gravel9-tilt
-    component: signal-ui
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: gravel9-tilt
-      component: signal-ui
-  template:
-    metadata:
-      labels:
-        app: gravel9-tilt
-        component: signal-ui
-    spec:
-      containers:
-      - name: signal-ui
-        image: gravel9/symbolic-signal-ui:latest
-        ports:
-        - containerPort: 9513
-        envFrom:
-        - configMapRef:
-            name: gravel9-config
-        - secretRef:
-            name: gravel9-secrets
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /ui-health
-            port: 9513
-          initialDelaySeconds: 20
-          periodSeconds: 10
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: observability-stack
-  namespace: gravel9-tilt
-  labels:
-    app: observability
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: observability
-  template:
-    metadata:
-      labels:
-        app: observability
-    spec:
-      containers:
-      - name: grafana
-        image: grafana/grafana:latest
-        ports:
-        - containerPort: 3000
-        volumeMounts:
-        - name: grafana-dashboards
-          mountPath: /etc/grafana/provisioning/dashboards
-        env:
-        - name: GF_AUTH_ANONYMOUS_ENABLED
-          value: "true"
-      - name: prometheus
-        image: prom/prometheus:latest
-        ports:
-        - containerPort: 9090
-        volumeMounts:
-        - name: prometheus-config
-          mountPath: /etc/prometheus
-      - name: fluentd
-        image: fluent/fluentd:v1.14
-        ports:
-        - containerPort: 24224
-        volumeMounts:
-        - name: fluentd-config
-          mountPath: /fluentd/etc
-      volumes:
-      - name: grafana-dashboards
-        configMap:
-          name: grafana-dashboards
-      - name: prometheus-config
-        configMap:
-          name: prometheus-config
-      - name: fluentd-config
-        configMap:
-          name: fluentd-config
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: ritual-cache-pvc
-  namespace: gravel9-tilt
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: symbolic-memory-pvc
-  namespace: gravel9-tilt
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: gravel9-core-service
-  namespace: gravel9-tilt
-spec:
-  selector:
-    app: gravel9-tilt
-    component: core
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 9009
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: quantum-veil-service
-  namespace: gravel9-tilt
-spec:
-  selector:
-    app: gravel9-tilt
-    component: quantum
-  ports:
-  - protocol: TCP
-    port: 81
-    targetPort: 9109
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: pattern-oracle-service
-  namespace: gravel9-tilt
-spec:
-  selector:
-    app: gravel9-tilt
-    component: oracle
-  ports:
-  - protocol: TCP
-    port: 82
-    targetPort: 9209
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: memory-totem-service
-  namespace: gravel9-tilt
-spec:
-  selector:
-    app: gravel9-tilt
-    component: totem
-  ports:
-  - protocol: TCP
-    port: 83
-    targetPort: 9313
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: flywheel-controller-service
-  namespace: gravel9-tilt
-spec:
-  selector:
-    app: gravel9-tilt
-    component: flywheel
-  ports:
-  - protocol: TCP
-    port: 84
-    targetPort: 9413
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: symbolic-signal-ui-service
-  namespace: gravel9-tilt
-spec:
-  selector:
-    app: gravel9-tilt
-    component: signal-ui
-  ports:
-  - protocol: TCP
-    port: 85
-    targetPort: 9513
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: observability-service
-  namespace: gravel9-tilt
-spec:
-  selector:
-    app: observability
-  ports:
-  - name: grafana
-    protocol: TCP
-    port: 3000
-    targetPort: 3000
-  - name: prometheus
-    protocol: TCP
-    port: 9090
-    targetPort: 9090
-  - name: fluentd
-    protocol: TCP
-    port: 24224
-    targetPort: 24224
-  type: ClusterIP
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: quantum-veil-isolation
-  namespace: gravel9-tilt
-spec:
-  podSelector:
-    matchLabels:
-      app: gravel9-tilt
-      component: quantum
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: gravel9-tilt
-          component: oracle
-    - podSelector:
-        matchLabels:
-          app: gravel9-tilt
-          component: totem
-    ports:
-    - protocol: TCP
-      port: 9109
-  egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          app: observability
-    - podSelector:
-        matchLabels:
-          app: gravel9-tilt
-          component: totem
-    ports:
-    - protocol: TCP
-      port: 24224
-    - protocol: TCP
-      port: 9313
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: gravel9-ingress
-  namespace: gravel9-tilt
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    gravel9.tilt/license: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - PROPRIETARY - ALL RIGHTS RESERVED"
-    gravel9.tilt/tagline: "This is a sovereign symbolic node."
-    gravel9.tilt/contact: "Dr. Darby Bailey McDonough"
-spec:
-  tls:
-  - hosts:
-    - gravel9.tilt.local
-    secretName: gravel9-tls
-  rules:
-  - host: gravel9.tilt.local
-    http:
-      paths:
-      - path: /core
-        pathType: Prefix
-        backend:
-          service:
-            name: gravel9-core-service
-            port:
-              number: 80
-      - path: /quantum
-        pathType: Prefix
-        backend:
-          service:
-            name: quantum-veil-service
-            port:
-              number: 81
-      - path: /oracle
-        pathType: Prefix
-        backend:
-          service:
-            name: pattern-oracle-service
-            port:
-              number: 82
-      - path: /totem
-        pathType: Prefix
-        backend:
-          service:
-            name: memory-totem-service
-            port:
-              number: 83
-      - path: /flywheel
-        pathType: Prefix
-        backend:
-          service:
-            name: flywheel-controller-service
-            port:
-              number: 84
-      - path: /signals
-        pathType: Prefix
-        backend:
-          service:
-            name: symbolic-signal-ui-service
-            port:
-              number: 85
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: observability-ingress
-  namespace: gravel9-tilt
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    gravel9.tilt/license: "GRAVEL9-TILT-CYBERNETIC-PARADIGM - PROPRIETARY - ALL RIGHTS RESERVED"
-spec:
-  tls:
-  - hosts:
-    - observability.tilt.local
-    secretName: observability-tls
-  rules:
-  - host: observability.tilt.local
-    http:
-      paths:
-      - path: /grafana
-        pathType: Prefix
-        backend:
-          service:
-            name: observability-service
-            port:
-              number: 3000
-      - path: /prometheus
-        pathType: Prefix
-        backend:
-          service:
-            name: observability-service
-            port:
-              number: 9090
+    For more detailed documentation:
+    
+    - [API Documentation](docs/README.md)
+    - [Architecture Overview](docs/ARCHITECTURE.md)
+    - [Contributing Guide](docs/CONTRIBUTING.md)
+    
+    ## 📝 License
+    
+    This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+    
+    ## 🙏 Acknowledgements
+    
+    - Thanks to all contributors who have helped shape this project
+    - Special thanks to the AI research community for making advanced language models accessible
+    
+    ## 🔮 Future Plans
+    
+    - Voice interaction capabilities
+    - Multi-modal companions that can process and generate images
+    - Companion memory and personalization
+    - Mobile app support
+    
+    ---
+    
+    Made with ❤️ by the AI Companions Team
