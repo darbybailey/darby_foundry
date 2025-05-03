@@ -8,7 +8,7 @@ The tool reads a YAML specification file and creates a complete repository struc
 necessary files, configurations, and documentation.
 
 Usage:
-    python foundry_v0_3.py --spec path/to/spec.yaml [--token GITHUB_TOKEN] [--output-dir ./output]
+    python foundry_v0_2.py --spec path/to/spec.yaml [--token GITHUB_TOKEN] [--output-dir ./output]
 """
 
 import os
