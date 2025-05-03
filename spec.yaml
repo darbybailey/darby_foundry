@@ -1,163 +1,121 @@
 repository:
-  name: quantum-view
-  description: QuantumView - An Entertainment-Education Analytics Platform visualizing
-    content impact on learning and behavior, powered by real-time data pipelines and
-    predictive modeling
+  name: mdvt
+  description: Multilingual Dubbing Visualization Tool for content producers
   visibility: public
   license: MIT
   topics:
-  - analytics
-  - visualization
-  - fastapi
-  - reactjs
-  - airflow
-  - timescaledb
-  - machine-learning
-  - netflix
+    - d3js
+    - nlp
+    - media
+    - visualization
+    - streaming
+
 structure:
   components:
-  - name: core
-    description: Core backend logic for data processing and predictive modeling
-    language: python
-    files:
-    - src/core/__init__.py
-    - src/core/data_processor.py
-    - src/core/predictive_model.py
-    - src/core/engagement_metrics.py
-  - name: api
-    description: FastAPI backend for serving analytics and dashboard data
-    language: python
-    files:
-    - src/api/__init__.py
-    - src/api/main.py
-    - src/api/endpoints.py
-    - src/api/models.py
-  - name: frontend
-    description: React.js dashboard with D3.js for interactive visualizations
-    language: typescript
-    files:
-    - src/frontend/index.html
-    - src/frontend/App.tsx
-    - src/frontend/Dashboard.tsx
-    - src/frontend/EngagementViz.tsx
-    - src/frontend/RetentionViz.tsx
-    - src/frontend/styles.css
-  - name: airflow
-    description: Apache Airflow DAGs for orchestrating data pipeline workflows
-    language: python
-    files:
-    - src/airflow/dags/__init__.py
-    - src/airflow/dags/data_ingestion.py
-    - src/airflow/dags/model_training.py
-  - name: database
-    description: PostgreSQL/TimescaleDB schema and queries for time-series data
-    language: sql
-    files:
-    - src/database/schema.sql
-    - src/database/queries.sql
-    - src/database/migrations/001_init.sql
-  - name: docs
-    description: Documentation for QuantumView setup, analytics, and theory
-    language: markdown
-    files:
-    - docs/index.md
-    - docs/api.md
-    - docs/entertainment_education.md
-    - docs/setup.md
-    - docs/model_explanation.md
-  - name: config
-    description: Configuration files for project setup and deployment
-    language: various
-    files:
-    - package.json
-    - requirements.txt
-    - .env.example
-    - docker-compose.yml
-    - .github/workflows/ci.yml
+    - name: core
+      description: Core NLP and translation engine
+      language: python
+      files:
+        - src/core/__init__.py
+        - src/core/nlp_processor.py
+        - src/core/translation_engine.py
+    - name: frontend
+      description: D3.js visualization dashboard
+      language: typescript
+      files:
+        - src/frontend/App.tsx
+        - src/frontend/Dashboard.tsx
+        - src/frontend/Flywheel.tsx
+    - name: api
+      description: API for integrating translation and visualization
+      language: python
+      files:
+        - src/api/__init__.py
+        - src/api/endpoints.py
+    - name: docs
+      description: Project documentation
+      language: markdown
+      files:
+        - docs/index.md
+        - docs/api.md
+        - docs/setup.md
+
 features:
-- name: interactive_dashboard
-  description: React.js and D3.js dashboard visualizing engagement across content
-    types
-- name: real_time_pipeline
-  description: FastAPI and Airflow pipeline processing 40M+ viewer interaction records
-- name: predictive_modeling
-  description: ML models forecasting viewer behavior based on content characteristics
-- name: retention_visualization
-  description: Visualizations showing educational content impact on viewer retention
-- name: time_series_storage
-  description: TimescaleDB for efficient storage and querying of time-series data
-- name: cybernetics_integration
-  description: Application of entertainment-education and cybernetics theory to analytics
+  - name: semantic-input
+    description: Natural language processing for dubbing instructions
+  - name: visualization
+    description: Real-time D3.js dashboard for language completion and metrics
+  - name: flywheel
+    description: Interactive speed adjustment for language processing
+  - name: sentiment-analysis
+    description: Tone matching for dubbed content
+
 readme:
-  title: QuantumView
-  tagline: Visualize impact. Predict engagement. Learn with entertainment.
+  title: Multilingual Dubbing Visualization Tool (MDVT)
+  tagline: Enhance dubbing workflows with real-time NLP and interactive dashboards
   sections:
-  - name: Overview
-    content: QuantumView enables education researchers and media producers to evaluate
-      how entertainment content impacts learning and behavioral outcomes.
-  - name: Features
-    content: '- Real-time analytics
+    - name: Overview
+      content: >
+        MDVT helps content producers and localizers manage multilingual dubbing projects with precision and speed.
+        It features NLP-powered translation, real-time sentiment analysis, and an interactive D3.js dashboard.
+    - name: Features
+      content: |
+        - Semantic NLP input for dubbing logic
+        - D3.js real-time visualization dashboard
+        - Interactive Flywheel control for adjusting processing speed
+        - Sentiment-aware tone matching for translated voiceovers
+    - name: Technologies Used
+      content: |
+        - Python 3.10+
+        - FastAPI
+        - D3.js
+        - TypeScript
+        - NLTK / SpaCy
+    - name: Getting Started
+      content: |
+        1. Clone this repository
+        2. Run `pip install -r requirements.txt`
+        3. Start the API with `uvicorn src.api.endpoints:app --reload`
+        4. Launch the frontend with `npm start` from `src/frontend`
+    - name: License
+      content: MIT License — see LICENSE file for details
 
-      - Predictive behavior modeling
-
-      - Viewer engagement tracking
-
-      - Time-series optimized storage
-
-      - D3.js dashboards'
-  - name: Technologies Used
-    content: '- Python 3.10+
-
-      - FastAPI
-
-      - Airflow
-
-      - TimescaleDB
-
-      - React.js
-
-      - D3.js'
-  - name: Getting Started
-    content: '1. Clone the repo
-
-      2. Run `docker-compose up`
-
-      3. Access dashboard at `localhost:3000`
-
-      4. API available at `localhost:8000/docs`'
-  - name: License
-    content: "MIT License \u2014 see LICENSE file for details"
 files_content:
-  .env.example: 'DATABASE_URL=postgres://localhost:5432/quantumview
+  .env.example: |
+    API_KEY=replace_this_key
+    TRANSLATION_ENDPOINT=https://api.translation.local
 
-    API_KEY=your_api_key_here
-
-    FRONTEND_PORT=3000
-
-    BACKEND_PORT=8000'
-  requirements.txt: 'fastapi
-
-    sqlalchemy
-
-    psycopg2-binary
-
-    alembic
-
-    pydantic
-
+  requirements.txt: |
+    fastapi
     uvicorn
+    spacy
+    nltk
+    python-dotenv
 
-    airflow
+  docs/index.md: |
+    # MDVT Documentation
 
-    pandas
+    Welcome to the MDVT platform. This system provides tools to manage, analyze, and visualize dubbing translation workflows.
 
-    scikit-learn
+    ## Modules
+    - Core: NLP and translation engine
+    - API: FastAPI backend for streaming endpoints
+    - Frontend: Interactive D3.js interface
+    - Flywheel: Dynamic visual language engine
 
-    matplotlib
+  docs/api.md: |
+    # MDVT API Reference
 
-    spacy'
-  docs/index.md: '# QuantumView Docs
+    The API exposes the following endpoints:
 
+    - `/translate`: Accepts original lines and returns multilingual dubbing suggestions
+    - `/flywheel`: Triggers adjustments to dubbing speed
+    - `/sentiment`: Analyzes sentiment of input and maps tones to dubbed lines
 
-    Welcome to the QuantumView analytics platform. This documentation provides instructions
-    for setup, API usage, data modeling, and interpretation.'
+  docs/setup.md: |
+    # Setup Guide
+
+    1. Install dependencies
+    2. Configure environment variables
+    3. Run backend and frontend apps
+    4. Access dashboard at `localhost:3000`
