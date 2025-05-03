@@ -1,895 +1,145 @@
 
-project_name: ai-companions
-folders:
-  - src
-  - public
-  - docs
-  - tests
-  - .github
-files:
-  - README.md
-  - package.json
-  - tsconfig.json
-  - .gitignore
-  - LICENSE
-  - ai-companions-deployment.yaml
-options:
-  visibility: public
-  description: "A framework for building AI companions that users can talk to and interact with through a web application plugin."
-  git_init: true
-  license: MIT
+#!/usr/bin/env python3
+# Foundry v0.2 - Minimal debug version
 
-repo_structure:
-  # Core application structure
-  frontend:
-    src:
-      components:
-        - CompanionAvatar.tsx: |
-            import React from 'react';
-            
-            interface CompanionAvatarProps {
-              name: string;
-              imageSrc: string;
-              status: 'online' | 'thinking' | 'offline';
-            }
-            
-            export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({ 
-              name, 
-              imageSrc, 
-              status 
-            }) => {
-              return (
-                <div className="companion-avatar">
-                  <div className={`status-indicator ${status}`}></div>
-                  <img src={imageSrc} alt={`${name} avatar`} />
-                  <h3>{name}</h3>
-                </div>
-              );
-            };
-        - ChatInterface.tsx: |
-            import React, { useState } from 'react';
-            
-            interface ChatInterfaceProps {
-              companionId: string;
-              onSendMessage: (message: string) => Promise<void>;
-            }
-            
-            export const ChatInterface: React.FC<ChatInterfaceProps> = ({
-              companionId,
-              onSendMessage
-            }) => {
-              const [message, setMessage] = useState('');
-              
-              const handleSubmit = async (e: React.FormEvent) => {
-                e.preventDefault();
-                if (message.trim()) {
-                  await onSendMessage(message);
-                  setMessage('');
-                }
-              };
-              
-              return (
-                <div className="chat-interface">
-                  <div className="message-container">
-                    {/* Messages will be rendered here */}
-                  </div>
-                  <form onSubmit={handleSubmit}>
-                    <input
-                      type="text"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Type your message..."
-                    />
-                    <button type="submit">Send</button>
-                  </form>
-                </div>
-              );
-            };
-        - CompanionSelector.tsx: |
-            import React from 'react';
-            import { CompanionAvatar } from './CompanionAvatar';
-            
-            interface Companion {
-              id: string;
-              name: string;
-              imageSrc: string;
-              status: 'online' | 'thinking' | 'offline';
-              description: string;
-            }
-            
-            interface CompanionSelectorProps {
-              companions: Companion[];
-              onSelect: (companionId: string) => void;
-            }
-            
-            export const CompanionSelector: React.FC<CompanionSelectorProps> = ({
-              companions,
-              onSelect
-            }) => {
-              return (
-                <div className="companion-selector">
-                  <h2>Choose Your AI Companion</h2>
-                  <div className="companions-grid">
-                    {companions.map(companion => (
-                      <div 
-                        key={companion.id} 
-                        className="companion-card"
-                        onClick={() => onSelect(companion.id)}
-                      >
-                        <CompanionAvatar
-                          name={companion.name}
-                          imageSrc={companion.imageSrc}
-                          status={companion.status}
-                        />
-                        <p>{companion.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            };
+import os
+import yaml
+import requests
+import sys
+import subprocess
 
-      hooks:
-        - useCompanion.ts: |
-            import { useState, useEffect } from 'react';
-            import { CompanionAPI } from '../services/CompanionAPI';
-            
-            export interface Message {
-              id: string;
-              text: string;
-              sender: 'user' | 'companion';
-              timestamp: Date;
-            }
-            
-            export const useCompanion = (companionId: string) => {
-              const [messages, setMessages] = useState<Message[]>([]);
-              const [isLoading, setIsLoading] = useState(false);
-              const [error, setError] = useState<string | null>(null);
-              
-              const sendMessage = async (text: string) => {
-                try {
-                  setIsLoading(true);
-                  setError(null);
-                  
-                  // Add user message to chat
-                  const userMessage: Message = {
-                    id: Date.now().toString(),
-                    text,
-                    sender: 'user',
-                    timestamp: new Date()
-                  };
-                  
-                  setMessages(prev => [...prev, userMessage]);
-                  
-                  // Get companion response
-                  const response = await CompanionAPI.sendMessage(companionId, text);
-                  
-                  // Add companion response to chat
-                  const companionMessage: Message = {
-                    id: response.id,
-                    text: response.text,
-                    sender: 'companion',
-                    timestamp: new Date(response.timestamp)
-                  };
-                  
-                  setMessages(prev => [...prev, companionMessage]);
-                } catch (err) {
-                  setError('Failed to send message. Please try again.');
-                  console.error(err);
-                } finally {
-                  setIsLoading(false);
-                }
-              };
-              
-              return {
-                messages,
-                isLoading,
-                error,
-                sendMessage
-              };
-            };
+# Print the current working directory
+print(f"Current working directory: {os.getcwd()}")
+print(f"Directory contents: {os.listdir('.')}")
 
-      services:
-        - CompanionAPI.ts: |
-            export interface CompanionResponse {
-              id: string;
-              text: string;
-              timestamp: string;
-            }
-            
-            export class CompanionAPI {
-              private static baseUrl = '/api/companions';
-              
-              static async getCompanions() {
-                const response = await fetch(`${this.baseUrl}`);
-                if (!response.ok) {
-                  throw new Error('Failed to fetch companions');
-                }
-                return response.json();
-              }
-              
-              static async getCompanionById(id: string) {
-                const response = await fetch(`${this.baseUrl}/${id}`);
-                if (!response.ok) {
-                  throw new Error(`Failed to fetch companion with ID: ${id}`);
-                }
-                return response.json();
-              }
-              
-              static async sendMessage(companionId: string, text: string): Promise<CompanionResponse> {
-                const response = await fetch(`${this.baseUrl}/${companionId}/messages`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({ text })
-                });
-                
-                if (!response.ok) {
-                  throw new Error('Failed to send message');
-                }
-                
-                return response.json();
-              }
-            }
-
-      models:
-        - Companion.ts: |
-            export interface Companion {
-              id: string;
-              name: string;
-              imageSrc: string;
-              description: string;
-              personality: string;
-              status: 'online' | 'thinking' | 'offline';
-              metadata: Record<string, any>;
-            }
-            
-            export interface CompanionPersonality {
-              traits: string[];
-              background: string;
-              interests: string[];
-              conversationStyle: string;
-            }
-
-      utils:
-        - formatters.ts: |
-            export const formatTimestamp = (date: Date): string => {
-              return new Intl.DateTimeFormat('en-US', {
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: true
-              }).format(date);
-            };
-
-      pages:
-        - CompanionChat.tsx: |
-            import React, { useState, useEffect } from 'react';
-            import { useParams } from 'react-router-dom';
-            import { ChatInterface } from '../components/ChatInterface';
-            import { CompanionAvatar } from '../components/CompanionAvatar';
-            import { useCompanion } from '../hooks/useCompanion';
-            import { CompanionAPI } from '../services/CompanionAPI';
-            import { Companion } from '../models/Companion';
-            
-            export const CompanionChat: React.FC = () => {
-              const { companionId } = useParams<{ companionId: string }>();
-              const [companion, setCompanion] = useState<Companion | null>(null);
-              const { messages, isLoading, error, sendMessage } = useCompanion(companionId || '');
-              
-              useEffect(() => {
-                const fetchCompanion = async () => {
-                  try {
-                    const data = await CompanionAPI.getCompanionById(companionId || '');
-                    setCompanion(data);
-                  } catch (err) {
-                    console.error('Failed to fetch companion:', err);
-                  }
-                };
-                
-                if (companionId) {
-                  fetchCompanion();
-                }
-              }, [companionId]);
-              
-              if (!companion) {
-                return <div>Loading companion...</div>;
-              }
-              
-              return (
-                <div className="companion-chat-page">
-                  <div className="companion-header">
-                    <CompanionAvatar
-                      name={companion.name}
-                      imageSrc={companion.imageSrc}
-                      status={isLoading ? 'thinking' : companion.status}
-                    />
-                    <p>{companion.description}</p>
-                  </div>
-                  
-                  <ChatInterface
-                    companionId={companionId || ''}
-                    onSendMessage={sendMessage}
-                  />
-                  
-                  {error && <div className="error-message">{error}</div>}
-                </div>
-              );
-            };
-
-  # Backend API components
-  backend:
-    src:
-      controllers:
-        - companionController.ts: |
-            import { Request, Response } from 'express';
-            import { CompanionService } from '../services/companionService';
-            
-            export class CompanionController {
-              static async getCompanions(req: Request, res: Response) {
-                try {
-                  const companions = await CompanionService.getCompanions();
-                  res.json(companions);
-                } catch (error) {
-                  res.status(500).json({ error: 'Failed to fetch companions' });
-                }
-              }
-              
-              static async getCompanionById(req: Request, res: Response) {
-                try {
-                  const { id } = req.params;
-                  const companion = await CompanionService.getCompanionById(id);
-                  
-                  if (!companion) {
-                    return res.status(404).json({ error: 'Companion not found' });
-                  }
-                  
-                  res.json(companion);
-                } catch (error) {
-                  res.status(500).json({ error: 'Failed to fetch companion' });
-                }
-              }
-              
-              static async sendMessage(req: Request, res: Response) {
-                try {
-                  const { id } = req.params;
-                  const { text } = req.body;
-                  
-                  if (!text) {
-                    return res.status(400).json({ error: 'Message text is required' });
-                  }
-                  
-                  const response = await CompanionService.sendMessage(id, text);
-                  res.json(response);
-                } catch (error) {
-                  res.status(500).json({ error: 'Failed to process message' });
-                }
-              }
-            }
-
-      services:
-        - companionService.ts: |
-            import { CompanionRepository } from '../repositories/companionRepository';
-            import { AIService } from './aiService';
-            
-            export class CompanionService {
-              static async getCompanions() {
-                return CompanionRepository.findAll();
-              }
-              
-              static async getCompanionById(id: string) {
-                return CompanionRepository.findById(id);
-              }
-              
-              static async sendMessage(companionId: string, text: string) {
-                // Get companion data to personalize response
-                const companion = await CompanionRepository.findById(companionId);
-                
-                if (!companion) {
-                  throw new Error('Companion not found');
-                }
-                
-                // Generate AI response based on companion personality
-                const response = await AIService.generateResponse(text, companion);
-                
-                // Save conversation history
-                await CompanionRepository.saveMessage(companionId, {
-                  text,
-                  sender: 'user',
-                  timestamp: new Date().toISOString()
-                });
-                
-                await CompanionRepository.saveMessage(companionId, {
-                  text: response.text,
-                  sender: 'companion',
-                  timestamp: new Date().toISOString()
-                });
-                
-                return {
-                  id: Date.now().toString(),
-                  text: response.text,
-                  timestamp: new Date().toISOString()
-                };
-              }
-            }
-
-        - aiService.ts: |
-            import { Companion } from '../models/Companion';
-            
-            interface AIResponse {
-              text: string;
-            }
-            
-            export class AIService {
-              static async generateResponse(userInput: string, companion: Companion): Promise<AIResponse> {
-                // This is where you would integrate with an LLM API like OpenAI, Claude, etc.
-                // For now, we'll implement a simple echo response
-                
-                // Create a prompt based on companion personality
-                const prompt = `
-                  You are ${companion.name}, with the following personality:
-                  ${companion.personality}
-                  
-                  User says: ${userInput}
-                  
-                  Respond as ${companion.name}:
-                `;
-                
-                try {
-                  // Call to AI service would go here
-                  // const aiResponse = await callExternalAIService(prompt);
-                  
-                  // Mock response for now
-                  const response = {
-                    text: `[${companion.name}] I heard you say: "${userInput}". This is a placeholder response.`
-                  };
-                  
-                  return response;
-                } catch (error) {
-                  console.error('Error generating AI response:', error);
-                  return {
-                    text: "I'm having trouble processing your message right now. Can we try again?"
-                  };
-                }
-              }
-            }
-
-      repositories:
-        - companionRepository.ts: |
-            import { Companion } from '../models/Companion';
-            
-            interface Message {
-              text: string;
-              sender: 'user' | 'companion';
-              timestamp: string;
-            }
-            
-            // Mock in-memory storage
-            const companions: Companion[] = [
-              {
-                id: 'assistant',
-                name: 'Assistant',
-                imageSrc: '/images/assistant.png',
-                description: 'A helpful and knowledgeable assistant.',
-                personality: 'Friendly, helpful, knowledgeable, and patient.',
-                status: 'online',
-                metadata: {}
-              },
-              {
-                id: 'counselor',
-                name: 'Counselor',
-                imageSrc: '/images/counselor.png',
-                description: 'An empathetic counselor who listens and offers guidance.',
-                personality: 'Empathetic, understanding, wise, and supportive.',
-                status: 'online',
-                metadata: {}
-              },
-              {
-                id: 'creative',
-                name: 'Creative',
-                imageSrc: '/images/creative.png',
-                description: 'A creative companion with a vivid imagination.',
-                personality: 'Creative, imaginative, artistic, and expressive.',
-                status: 'online',
-                metadata: {}
-              }
-            ];
-            
-            const conversations: Record<string, Message[]> = {};
-            
-            export class CompanionRepository {
-              static async findAll(): Promise<Companion[]> {
-                return [...companions];
-              }
-              
-              static async findById(id: string): Promise<Companion | undefined> {
-                return companions.find(companion => companion.id === id);
-              }
-              
-              static async saveMessage(companionId: string, message: Message): Promise<void> {
-                if (!conversations[companionId]) {
-                  conversations[companionId] = [];
-                }
-                
-                conversations[companionId].push(message);
-              }
-              
-              static async getConversation(companionId: string): Promise<Message[]> {
-                return conversations[companionId] || [];
-              }
-            }
-
-      models:
-        - Companion.ts: |
-            export interface Companion {
-              id: string;
-              name: string;
-              imageSrc: string;
-              description: string;
-              personality: string;
-              status: 'online' | 'thinking' | 'offline';
-              metadata: Record<string, any>;
-            }
-
-  # Configuration files
-  config:
-    - tsconfig.json: |
-        {
-          "compilerOptions": {
-            "target": "es6",
-            "lib": ["dom", "dom.iterable", "esnext"],
-            "allowJs": true,
-            "skipLibCheck": true,
-            "esModuleInterop": true,
-            "allowSyntheticDefaultImports": true,
-            "strict": true,
-            "forceConsistentCasingInFileNames": true,
-            "noFallthroughCasesInSwitch": true,
-            "module": "esnext",
-            "moduleResolution": "node",
-            "resolveJsonModule": true,
-            "isolatedModules": true,
-            "noEmit": true,
-            "jsx": "react-jsx"
-          },
-          "include": ["src"]
-        }
-        
-    - package.json: |
-        {
-          "name": "ai-companions",
-          "version": "0.1.0",
-          "private": true,
-          "dependencies": {
-            "express": "^4.18.2",
-            "react": "^18.2.0",
-            "react-dom": "^18.2.0",
-            "react-router-dom": "^6.10.0",
-            "typescript": "^4.9.5"
-          },
-          "scripts": {
-            "start": "react-scripts start",
-            "build": "react-scripts build",
-            "test": "react-scripts test",
-            "eject": "react-scripts eject",
-            "server": "ts-node src/server.ts"
-          },
-          "devDependencies": {
-            "@types/express": "^4.17.17",
-            "@types/node": "^16.18.23",
-            "@types/react": "^18.0.35",
-            "@types/react-dom": "^18.0.11",
-            "ts-node": "^10.9.1"
-          }
-        }
-        
-    - .gitignore: |
-        # dependencies
-        /node_modules
-        /.pnp
-        .pnp.js
-        
-        # testing
-        /coverage
-        
-        # production
-        /build
-        
-        # misc
-        .DS_Store
-        .env.local
-        .env.development.local
-        .env.test.local
-        .env.production.local
-        
-        npm-debug.log*
-        yarn-debug.log*
-        yarn-error.log*
-        
-    - .env.example: |
-        PORT=3000
-        AI_API_KEY=your_api_key_here
-        NODE_ENV=development
-
-  # Documentation
-  docs:
-    - README.md: |
-        # AI Companions API Documentation
-        
-        This documentation covers the API endpoints available for the AI Companions platform.
-        
-        ## Endpoints
-        
-        ### GET /api/companions
-        
-        Retrieves a list of all available AI companions.
-        
-        **Response:**
-        ```json
-        [
-          {
-            "id": "assistant",
-            "name": "Assistant",
-            "imageSrc": "/images/assistant.png",
-            "description": "A helpful and knowledgeable assistant.",
-            "status": "online"
-          },
-          ...
-        ]
-        ```
-        
-        ### GET /api/companions/:id
-        
-        Retrieves information about a specific companion.
-        
-        **Response:**
-        ```json
-        {
-          "id": "assistant",
-          "name": "Assistant",
-          "imageSrc": "/images/assistant.png",
-          "description": "A helpful and knowledgeable assistant.",
-          "status": "online",
-          "personality": "Friendly, helpful, knowledgeable, and patient.",
-          "metadata": {}
-        }
-        ```
-        
-        ### POST /api/companions/:id/messages
-        
-        Sends a message to a companion and receives a response.
-        
-        **Request Body:**
-        ```json
-        {
-          "text": "Hello, how are you today?"
-        }
-        ```
-        
-        **Response:**
-        ```json
-        {
-          "id": "123456789",
-          "text": "I'm doing well, thank you! How can I help you today?",
-          "timestamp": "2025-05-02T12:34:56.789Z"
-        }
-        ```
-        
-    - CONTRIBUTING.md: |
-        # Contributing to AI Companions
-        
-        Thank you for your interest in contributing to the AI Companions project! This document provides guidelines for contributing to this project.
-        
-        ## Getting Started
-        
-        1. Fork the repository
-        2. Clone your fork: `git clone https://github.com/your-username/ai-companions.git`
-        3. Create a new branch: `git checkout -b feature/your-feature-name`
-        4. Install dependencies: `npm install`
-        
-        ## Development Workflow
-        
-        1. Make your changes
-        2. Run tests: `npm test`
-        3. Submit a pull request
-        
-        ## Code Style
-        
-        We use ESLint and Prettier to maintain code quality. Please ensure your code follows these guidelines.
-        
-        ## Adding New Companions
-        
-        To add a new AI companion:
-        
-        1. Create a new companion profile in `src/data/companions.ts`
-        2. Add an avatar image in the `public/images` directory
-        3. Update the companion repository with your new companion
-        4. Add appropriate tests
-        
-        ## License
-        
-        By contributing to this project, you agree that your contributions will be licensed under the project's MIT license.
-        
-    - ARCHITECTURE.md: |
-        # AI Companions Architecture
-        
-        This document outlines the architecture of the AI Companions platform.
-        
-        ## Overview
-        
-        The AI Companions platform is built with a React frontend and Node.js/Express backend, using TypeScript throughout. It provides a framework for creating and interacting with AI companions that have distinct personalities and capabilities.
-        
-        ## Frontend Architecture
-        
-        The frontend is built using React with TypeScript and follows a component-based architecture.
-        
-        ### Key Components
-        
-        - **CompanionSelector**: Allows users to browse and select companions
-        - **ChatInterface**: Provides the messaging interface for communicating with companions
-        - **CompanionAvatar**: Displays the companion's avatar image and status
-        
-        ### State Management
-        
-        We use React hooks for state management, with custom hooks like `useCompanion` to handle conversation state and API interactions.
-        
-        ## Backend Architecture
-        
-        The backend uses Express.js with TypeScript and follows a layered architecture.
-        
-        ### Layers
-        
-        1. **Controllers**: Handle HTTP requests and responses
-        2. **Services**: Contain business logic
-        3. **Repositories**: Handle data access and persistence
-        4. **Models**: Define data structures
-        
-        ### AI Integration
-        
-        The `AIService` connects to external AI providers to generate companion responses based on:
-        
-        - The user's input
-        - The companion's personality profile
-        - Conversation history
-        
-        ## Data Flow
-        
-        1. User selects a companion
-        2. User sends a message via the ChatInterface
-        3. Message is sent to the backend API
-        4. CompanionService processes the message
-        5. AIService generates a response
-        6. Response is saved and returned to the frontend
-        7. Frontend displays the response in the ChatInterface
-
-  # Main README.md content
-  README.md: |
-    # AI Companions 🤖 👾 👻
+try:
+    # Read the file and fix YAML issues
+    with open("spec.yaml", "r") as f:
+        content = f.read()
     
-    AI Companions is a framework for building interactive, personalized AI characters that users can talk to and interact with through a web application plugin.
+    # Remove "yaml" header if present
+    lines = content.split("\n")
+    if lines[0].strip().lower() == "yaml":
+        content = "\n".join(lines[1:])
     
-    ## 🌟 Features
+    # Split by document separator
+    parts = content.split("---")
+    config_text = parts[0].strip()
     
-    - **Multiple AI Personalities**: Create different AI companions with unique personalities, knowledge domains, and interaction styles
-    - **Real-time Chat Interface**: A responsive and intuitive chat interface for seamless conversations
-    - **Customizable Avatars**: Assign custom avatars to each AI companion
-    - **Extensible Framework**: Easily add new companions or extend existing ones
-    - **Conversation History**: Maintains context across conversations
-    - **TypeScript Support**: Fully typed for better development experience
-    - **Responsive Design**: Works on mobile, tablet, and desktop devices
+    # Parse configuration with safer approach
+    try:
+        config = yaml.safe_load(config_text)
+        print("Config parsed successfully:")
+        print(config)
+    except Exception as yaml_error:
+        print(f"YAML parsing error: {yaml_error}")
+        # Try manual parsing as fallback
+        config = {}
+        for line in config_text.split("\n"):
+            if ":" in line and not line.strip().startswith("#"):
+                key, value = line.split(":", 1)
+                config[key.strip()] = value.strip()
+        print("Manual parsing result:")
+        print(config)
     
-    ## 🚀 Getting Started
+    # Extract basic info
+    project_name = config.get("project_name", "gravel9-tilt")
+    print(f"Project name: {project_name}")
     
-    ### Prerequisites
+    # Create project directory
+    print(f"Creating directory: {project_name}")
+    os.makedirs(project_name, exist_ok=True)
     
-    - Node.js 14.x or later
-    - npm or yarn
+    # Move into project directory
+    print(f"Changing to directory: {project_name}")
+    os.chdir(project_name)
     
-    ### Installation
+    # Create a simple file to verify operations
+    print("Creating test files")
+    with open("README.md", "w") as f:
+        f.write(f"# {project_name}\n\nProject created by Foundry.")
     
-    1. Clone the repository:
+    with open("gravel9-tilt-deployment.yaml", "w") as f:
+        f.write("\n".join(parts[1:]))
     
-    ```
-    git clone https://github.com/your-username/ai-companions.git
-    cd ai-companions
-    ```
+    # List directory contents to verify
+    print(f"Files created in {os.getcwd()}: {os.listdir('.')}")
     
-    2. Install dependencies:
+    # Initialize git
+    print("Initializing git repository")
+    subprocess.run(["git", "init"], check=True)
+    subprocess.run(["git", "config", "user.name", "Foundry Bot"], check=True)
+    subprocess.run(["git", "config", "user.email", "foundry@example.com"], check=True)
     
-    ```
-    npm install
-    ```
+    # Add and commit files
+    print("Adding files to git")
+    subprocess.run(["git", "add", "."], check=True)
+    print("Committing files")
+    subprocess.run(["git", "commit", "-m", "Initial commit from Foundry"], check=True)
     
-    3. Create a `.env` file based on `.env.example`:
+    # Get credentials
+    token = os.environ.get("FOUNDRY_TOKEN_PERSONAL")
+    username = os.environ.get("FOUNDRY_USERNAME")
     
-    ```
-    cp .env.example .env
-    ```
+    if not token or not username:
+        print("Missing GitHub credentials")
+        sys.exit(1)
     
-    4. Start the development server:
+    print(f"Using GitHub credentials for user: {username}")
     
-    ```
-    npm run dev
-    ```
-    
-    The application will be available at `http://localhost:3000`
-    
-    ## 🧠 AI Integration
-    
-    This framework can connect to various AI providers:
-    
-    - OpenAI (GPT-4, GPT-3.5)
-    - Anthropic Claude
-    - Other compatible LLM APIs
-    
-    To configure your AI provider, update the settings in the `.env` file.
-    
-    ## 🎭 Creating Custom Companions
-    
-    Create new AI companions by adding entries to the companion repository:
-    
-    1. Define a new companion in `src/repositories/companionRepository.ts`
-    2. Add an avatar image in `public/images`
-    3. Customize the personality, description, and other attributes
-    
-    For example:
-    
-    ```typescript
-    {
-      id: 'detective',
-      name: 'Detective Holmes',
-      imageSrc: '/images/detective.png',
-      description: 'A brilliant detective who helps solve mysteries.',
-      personality: 'Analytical, observant, logical, and slightly eccentric.',
-      status: 'online',
-      metadata: {
-        specialties: ['deduction', 'observation', 'crime solving']
-      }
+    # Create GitHub repository
+    print(f"Creating GitHub repository: {project_name}")
+    url = "https://api.github.com/user/repos"
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github.v3+json"
     }
-    ```
+    data = {
+        "name": project_name,
+        "private": False,
+        "auto_init": False
+    }
     
-    ## 🧩 Project Structure
+    res = requests.post(url, headers=headers, json=data)
+    print(f"GitHub API response: {res.status_code}")
     
-    ```
-    ai-companions/
-    ├── src/
-    │   ├── components/      # React components
-    │   ├── hooks/           # Custom React hooks
-    │   ├── services/        # API services
-    │   ├── models/          # TypeScript interfaces
-    │   ├── pages/           # Page components
-    │   ├── utils/           # Utility functions
-    │   ├── repositories/    # Data repositories
-    │   └── controllers/     # API controllers
-    ├── public/              # Static assets
-    ├── docs/                # Documentation
-    └── tests/               # Test files
-    ```
+    if res.status_code == 201:
+        repo_url = res.json().get('html_url')
+        print(f"GitHub repository created: {repo_url}")
+        
+        # Push to GitHub
+        remote_url = f"https://{username}:{token}@github.com/{username}/{project_name}.git"
+        print(f"Adding git remote")
+        subprocess.run(["git", "remote", "add", "origin", remote_url], check=True)
+        
+        # Try main branch
+        print("Pushing to main branch")
+        try:
+            subprocess.run(["git", "branch", "-M", "main"], check=True)
+            subprocess.run(["git", "push", "-u", "origin", "main"], check=True, 
+                          stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        except subprocess.CalledProcessError as e:
+            print(f"Push error: {e}")
+            print(f"STDOUT: {e.stdout.decode() if e.stdout else 'None'}")
+            print(f"STDERR: {e.stderr.decode() if e.stderr else 'None'}")
+            
+            # Try master branch as fallback
+            print("Trying master branch instead")
+            try:
+                subprocess.run(["git", "branch", "-M", "master"], check=True)
+                subprocess.run(["git", "push", "-u", "origin", "master"], check=True,
+                             stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            except subprocess.CalledProcessError as e2:
+                print(f"Master branch push error: {e2}")
+                print(f"STDOUT: {e2.stdout.decode() if e2.stdout else 'None'}")
+                print(f"STDERR: {e2.stderr.decode() if e2.stderr else 'None'}")
+        
+        print("Git push operation complete")
+    else:
+        print(f"GitHub repository creation failed. Response: {res.text}")
     
-    ## 📖 Documentation
-    
-    For more detailed documentation:
-    
-    - [API Documentation](docs/README.md)
-    - [Architecture Overview](docs/ARCHITECTURE.md)
-    - [Contributing Guide](docs/CONTRIBUTING.md)
-    
-    ## 📝 License
-    
-    This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-    
-    ## 🙏 Acknowledgements
-    
-    - Thanks to all contributors who have helped shape this project
-    - Special thanks to the AI research community for making advanced language models accessible
-    
-    ## 🔮 Future Plans
-    
-    - Voice interaction capabilities
-    - Multi-modal companions that can process and generate images
-    - Companion memory and personalization
-    - Mobile app support
-    
-    ---
-    
-    Made with ❤️ by the AI Companions Team
+except Exception as e:
+    print(f"Error: {e}")
+    sys.exit(1)
+
+print("Script completed")
