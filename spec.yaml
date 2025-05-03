@@ -1,79 +1,71 @@
-
 repository:
-  name: hybrid-media-scaler
-  description: HybridMediaScaler - A content delivery optimization system for video and audio with multilingual support, adaptive bitrate, and global CDN simulation
+  name: game-flix
+  description: Game-Flix - A cosmic astronaut leaderboard game with API-driven data feeds, AI host guidance, Web3 integration, and transmedia storytelling for Netflix's gaming universe
   visibility: public
   license: MIT
   topics:
-    - streaming
-    - ffmpeg
-    - tensorflow
-    - grafana
-    - prometheus
-    - cdn
-    - multilingual
+    - gaming
+    - d3js
+    - phaserjs
+    - nlp
+    - web3
     - netflix
+    - visualization
+    - transmedia
 
 structure:
   components:
     - name: core
-      description: Core video and audio processing pipeline with FFmpeg
+      description: Core game logic and API connectivity for real-time data feeds
       language: python
       files:
         - src/core/__init__.py
-        - src/core/encoding_pipeline.py
-        - src/core/audio_processor.py
-        - src/core/translation_engine.py
-    - name: ml
-      description: TensorFlow models for predicting optimal encoding settings
-      language: python
-      files:
-        - src/ml/__init__.py
-        - src/ml/encoding_optimizer.py
-        - src/ml/model_training.py
-        - src/ml/pretrained_model_config.json
-    - name: api
-      description: FastAPI backend for managing content delivery and analytics
-      language: python
-      files:
-        - src/api/__init__.py
-        - src/api/main.py
-        - src/api/endpoints.py
-        - src/api/models.py
+        - src/core/game_engine.py
+        - src/core/api_client.py
+        - src/core/data_feeds.py
+        - src/core/config.py
     - name: frontend
-      description: Grafana/Prometheus dashboard for bandwidth and quality metrics
+      description: Phaser.js gaming layer and D3.js visualizations for leaderboards and mission stats
       language: typescript
       files:
         - src/frontend/index.html
-        - src/frontend/Dashboard.tsx
-        - src/frontend/BandwidthViz.tsx
-        - src/frontend/QualityViz.tsx
-        - src/frontend/TranslationViz.tsx
+        - src/frontend/GameScene.tsx
+        - src/frontend/Leaderboard.tsx
+        - src/frontend/DataViz.tsx
         - src/frontend/styles.css
-    - name: cdn
-      description: Simulated global CDN with edge caching strategies
+    - name: ai_host
+      description: NLP-driven AI host guide for cinematic gameplay narration
       language: python
       files:
-        - src/cdn/__init__.py
-        - src/cdn/edge_cache.py
-        - src/cdn/distribution_simulator.py
-    - name: multilingual
-      description: Real-time audio streaming and translation for multiple languages
+        - src/ai_host/__init__.py
+        - src/ai_host/nlp_guide.py
+        - src/ai_host/dialogue_manager.py
+        - src/ai_host/prompts.json
+    - name: auth
+      description: User authentication with MetaMask Web3 wallet and NFT reward integration
+      language: typescript
+      files:
+        - src/auth/AuthManager.tsx
+        - src/auth/MetaMaskConnector.tsx
+        - src/auth/UserProfile.tsx
+        - src/auth/memory_totem.sol
+    - name: api
+      description: REST API for game data, user scores, and transmedia narrative triggers
       language: python
       files:
-        - src/multilingual/__init__.py
-        - src/multilingual/language_switcher.py
-        - src/multilingual/sync_manager.py
-        - src/multilingual/translation_api.py
+        - src/api/__init__.py
+        - src/api/endpoints.py
+        - src/api/transmedia.py
+        - src/api/narrative_triggers.json
     - name: docs
-      description: Documentation for HybridMediaScaler setup and optimization
+      description: Documentation for Game-Flix setup, API, and transmedia narrative
       language: markdown
       files:
         - docs/index.md
         - docs/api.md
-        - docs/encoding_guide.md
-        - docs/multilingual_setup.md
-        - docs/cdn_simulation.md
+        - docs/transmedia_narrative.md
+        - docs/setup.md
+        - docs/web3_guide.md
     - name: config
       description: Configuration files for project setup and deployment
       language: various
@@ -82,83 +74,76 @@ structure:
         - requirements.txt
         - .env.example
         - docker-compose.yml
-        - prometheus.yml
-        - grafana/provisioning/dashboards/hybrid_media.json
         - .github/workflows/ci.yml
 
 features:
-  - name: adaptive_encoding
-    description: FFmpeg-based video and audio encoding with adaptive bitrate optimization
-  - name: multilingual_streaming
-    description: Real-time audio tracks in multiple languages with dynamic switching
-  - name: encoding_optimization
-    description: TensorFlow model predicting optimal encoding settings by content type
-  - name: analytics_dashboard
-    description: Grafana/Prometheus visualizations for bandwidth, quality, and translation metrics
-  - name: global_cdn
-    description: Simulated CDN with edge caching for low-latency content delivery
-  - name: multi_user_sync
-    description: Synchronized audio streaming for multiple users in different languages
-  - name: translation_accuracy
-    description: Metrics tracking accuracy of automated translations and dubbing
+  - name: leaderboard
+    description: Real-time astronaut leaderboard with space mission and gaming stats
+  - name: api_connectivity
+    description: Integration with Launch Library, Abios, and Netflix proprietary game APIs
+  - name: ai_guide
+    description: NLP-driven AI host for cinematic gameplay guidance with Netflix-style storytelling
+  - name: web3_auth
+    description: MetaMask wallet login for secure user accounts and Memory Totem NFT rewards
+  - name: visualizations
+    description: D3.js dashboards for mission data, player rankings, and retro-futuristic analytics
+  - name: transmedia
+    description: Filmic narrative integration linking gameplay to Netflix's cinematic content
+  - name: memory_totem
+    description: Cosmic achievement system issuing NFT-based player milestones
+  - name: real_time_analytics
+    description: Apache Flink-inspired real-time game analytics for player engagement
 
 readme:
-  title: HybridMediaScaler
-  tagline: Smart content delivery optimization for multilingual streaming at scale
+  title: Game-Flix
+  tagline: A cosmic leaderboard game with AI storytelling and Web3 rewards
   sections:
     - name: Overview
       content: >
-        HybridMediaScaler intelligently delivers video/audio content with real-time adaptation based on user location,
-        bandwidth, and language preferences—offering high performance and accessibility across the globe.
+        Game-Flix is a gamified entertainment universe that merges data-driven gameplay, Web3 rewards, and
+        AI-driven storytelling for an interactive leaderboard journey set in space.
     - name: Features
       content: |
-        - Adaptive FFmpeg encoding pipeline
-        - Real-time multilingual switching
-        - TensorFlow-based encoding optimization
-        - Grafana dashboards for bandwidth and translation metrics
-        - Global CDN simulation for low-latency delivery
+        - Real-time astronaut leaderboard
+        - API feeds from Launch Library and gaming APIs
+        - AI host narrator with cinematic storytelling
+        - MetaMask login and NFT-based Memory Totem system
+        - Transmedia narrative bridging games and Netflix films
     - name: Technologies Used
       content: |
         - Python 3.10+
-        - TensorFlow
-        - FFmpeg
         - FastAPI
-        - Grafana + Prometheus
-        - Docker + Kubernetes
+        - Phaser.js
+        - D3.js
+        - Web3.js / MetaMask
+        - PostgreSQL + Redis
     - name: Getting Started
       content: |
         1. Clone the repository
-        2. Install dependencies via `pip install -r requirements.txt`
-        3. Run `docker-compose up` to launch the full stack
-        4. Visit the Grafana dashboard at `localhost:3000`
-        5. API available at `localhost:8000/docs`
+        2. Install Python dependencies: `pip install -r requirements.txt`
+        3. Run `docker-compose up`
+        4. Access the game at `localhost:3000` and API at `localhost:8000/docs`
     - name: License
       content: MIT License — see LICENSE file for details
 
 files_content:
   .env.example: |
-    API_KEY=your_api_key_here
-    TRANSLATION_SERVICE_URL=https://api.translation-service.com
+    SECRET_KEY=your-secret
+    METAMASK_PUBLIC_KEY=0x123...
+    API_BASE_URL=https://api.launchlibrary.net
+
+  docs/index.md: |
+    # Game-Flix Documentation
+
+    Welcome to the Game-Flix developer and user documentation. This site contains all relevant guides for setup,
+    gameplay logic, transmedia triggers, and Web3 authentication.
 
   requirements.txt: |
     fastapi
     uvicorn
-    ffmpeg-python
-    tensorflow==2.15.0
-    prometheus-client
-    python-multipart
-    aiohttp
-    pydantic
-    numpy
-    scikit-learn
-
-  docs/index.md: |
-    # HybridMediaScaler Documentation
-
-    Welcome to the HybridMediaScaler documentation.
-
-    ## Sections
-    - `api.md`: API endpoint descriptions
-    - `encoding_guide.md`: How to configure FFmpeg pipelines
-    - `multilingual_setup.md`: Real-time multilingual configuration
-    - `cdn_simulation.md`: Edge caching and simulated CDN behavior
+    requests
+    sqlalchemy
+    redis
+    nltk
+    spacy
+    web3
