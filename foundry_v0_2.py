@@ -99,21 +99,24 @@ for root, dirs, files in os.walk("."):
         push_file(repo_path, content, project_name)
 
 # === Generate README.md from spec.yaml if readme section exists ===
-readme = config.get("readme", {})
-readme_lines = []
+if "readme" in config:
+    readme = config["readme"]
+    readme_lines = []
 
-if readme:
     if "title" in readme:
         readme_lines.append(f"# {readme['title']}\n")
     if "tagline" in readme:
         readme_lines.append(f"**{readme['tagline']}**\n")
     if "sections" in readme:
         for section in readme["sections"]:
-            readme_lines.append(f"\n## {section['name']}\n")
-            readme_lines.append(f"{section['content']}\n")
+            name = section.get("name", "").strip()
+            content = section.get("content", "").strip()
+            readme_lines.append(f"\n## {name}\n{content}\n")
 
     with open("README.md", "w") as f:
         f.write("\n".join(readme_lines))
+    print("✅ README.md generated from spec.yaml")
+    
         
 # === Final step: Cleanup the local folder ===
 os.chdir("..")
