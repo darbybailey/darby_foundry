@@ -287,14 +287,14 @@ if __name__ == "__main__":
     instance.run()
 '''
 
-    def _generate_markdown_file(self, file_path: str, component_name: str, description: str) -> str:
-        """Generate content for a Markdown file"""
-        basename = os.path.basename(file_path)
-        filename_without_ext = os.path.splitext(basename)[0]
-        title = ' '.join(word.capitalize() for word in filename_without_ext.split('_'))
+def _generate_markdown_file(self, file_path: str, component_name: str, description: str) -> str:
+    """Generate content for a Markdown file"""
+    basename = os.path.basename(file_path)
+    filename_without_ext = os.path.splitext(basename)[0]
+    title = ' '.join(word.capitalize() for word in filename_without_ext.split('_'))
 
-        if basename == 'index.md':
-            return f'''# {self.spec.repo_name}
+    if basename == 'index.md':
+        return f'''# {self.spec.repo_name}
 
 {self.spec.repo_description}
 
@@ -314,7 +314,7 @@ This documentation covers the {self.spec.repo_name} project, a {description}.
 
 TODO: Add getting started instructions
 '''
-
+    else:
         return f'''# {title}
 
 {description}
@@ -329,4 +329,5 @@ TODO: Add usage instructions
 
 ## Reference
 
-TODO 
+TODO: Add reference documentation
+'''
