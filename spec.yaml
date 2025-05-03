@@ -1,142 +1,42 @@
-repository:
-  name: hybrid-media-scalar
-  description: >
-    HybridMediaScaler - A content delivery optimization system for video and audio
-    with multilingual support, adaptive bitrate, and global CDN simulation.
-  visibility: public
-  license: MIT
-  topics:
-    - streaming
-    - ffmpeg
-    - tensorflow
-    - grafana
-    - prometheus
-    - cdn
-    - multilingual
-    - netflix
-
-structure:
-  components:
-    - name: core
-      description: Core video and audio processing pipeline with FFmpeg
-      language: python
-      files:
-        - src/core/__init__.py
-        - src/core/encoding_pipeline.py
-        - src/core/audio_processor.py
-        - src/core/translation_engine.py
-
-    - name: ml
-      description: TensorFlow models for predicting optimal encoding settings
-      language: python
-      files:
-        - src/ml/__init__.py
-        - src/ml/encoding_optimizer.py
-        - src/ml/model_training.py
-        - src/ml/pretrained_model_config.json
-
-    - name: api
-      description: FastAPI backend for managing content delivery and analytics
-      language: python
-      files:
-        - src/api/__init__.py
-        - src/api/main.py
-        - src/api/endpoints.py
-        - src/api/models.py
-
-    - name: frontend
-      description: Grafana/Prometheus dashboard for bandwidth and quality metrics
-      language: typescript
-      files:
-        - src/frontend/index.html
-        - src/frontend/Dashboard.tsx
-        - src/frontend/BandwidthViz.tsx
-        - src/frontend/QualityViz.tsx
-        - src/frontend/TranslationViz.tsx
-        - src/frontend/styles.css
-
-    - name: cdn
-      description: Simulated global CDN with edge caching strategies
-      language: python
-      files:
-        - src/cdn/__init__.py
-        - src/cdn/edge_cache.py
-        - src/cdn/distribution_simulator.py
-
-    - name: multilingual
-      description: Real-time audio streaming and translation for multiple languages
-      language: python
-      files:
-        - src/multilingual/__init__.py
-        - src/multilingual/language_switcher.py
-        - src/multilingual/sync_manager.py
-        - src/multilingual/translation_api.py
-
-    - name: docs
-      description: Documentation for HybridMediaScaler setup and optimization
-      language: markdown
-      files:
-        - docs/index.md
-        - docs/api.md
-        - docs/encoding_guide.md
-        - docs/multilingual_setup.md
-        - docs/cdn_simulation.md
-
-    - name: config
-      description: Configuration files for project setup and deployment
-      language: various
-      files:
-        - package.json
-        - requirements.txt
-        - .env.example
-        - docker-compose.yml
-        - prometheus.yml
-        - grafana/provisioning/dashboards/hybrid_media.json
-        - .github/workflows/ci.yml
-
-features:
-  - name: adaptive_encoding
-    description: FFmpeg-based video and audio encoding with adaptive bitrate optimization
-  - name: multilingual_streaming
-    description: Real-time audio tracks in multiple languages with dynamic switching
-  - name: encoding_optimization
-    description: TensorFlow model predicting optimal encoding settings by content type
-  - name: analytics_dashboard
-    description: Grafana/Prometheus visualizations for bandwidth, quality, and translation metrics
-  - name: global_cdn
-    description: Simulated CDN with edge caching for low-latency content delivery
-  - name: multi_user_sync
-    description: Synchronized audio streaming for multiple users in different languages
-  - name: translation_accuracy
-    description: Metrics tracking accuracy of automated translations and dubbing
-
 readme:
-  title: "HybridMediaScaler"
-  tagline: "Multilingual Streaming with Global Optimization"
+  title: HybridMediaScaler
+  tagline: Smart content delivery optimization for multilingual streaming at scale
   sections:
-    - name: "Overview"
+    - name: Overview
       content: >
-        HybridMediaScaler optimizes multilingual video/audio delivery using FFmpeg, machine learning,
-        and simulated CDN infrastructure. It enables adaptive bitrate encoding, multilingual audio sync,
-        and real-time analytics dashboards for high-quality content distribution.
-    - name: "Features"
+        HybridMediaScaler is a content delivery optimization system for audio and video
+        streaming. It uses adaptive bitrate encoding, real-time multilingual support,
+        and a simulated global CDN to ensure quality experiences across diverse environments.
+    - name: Features
       content: |
-        - Adaptive encoding with FFmpeg and TensorFlow  
-        - Real-time multilingual streaming with sync manager  
-        - Edge-cached CDN simulation for global delivery  
-        - Prometheus & Grafana dashboards for monitoring  
-        - FastAPI backend with RESTful analytics
-    - name: "Tech Stack"
+        - Adaptive FFmpeg encoding pipeline
+        - Real-time multilingual switching
+        - TensorFlow-based encoding optimization
+        - Grafana dashboards for bandwidth and translation metrics
+        - Global CDN simulation for low-latency delivery
+    - name: Technologies Used
       content: |
-        - **Python** (FastAPI, TensorFlow, FFmpeg)  
-        - **TypeScript** (Grafana, D3.js, Prometheus)  
-        - **Docker** & **Kubernetes-ready** configs  
-        - **Multilingual sync** & **edge caching**
-    - name: "Getting Started"
+        - Python 3.10+
+        - TensorFlow
+        - FFmpeg
+        - FastAPI
+        - Grafana + Prometheus
+        - Docker + Kubernetes
+    - name: Getting Started
       content: |
-        1. Clone the repo  
-        2. Copy `.env.example` to `.env` and set variables  
-        3. Run `docker-compose up --build`  
-        4. Access the dashboard at `http://localhost:3000`
-    - name: "License"
+        1. Clone the repo
+        2. Run `docker-compose up`
+        3. Visit `localhost:3000` for dashboard and API docs
+    - name: License
       content: MIT License — see LICENSE file for details
+
+files_content:
+  .env.example: |
+    API_KEY=your_api_key_here
+    TRANSLATION_SERVICE_URL=https://api.translation.com
+
+  docs/index.md: |
+    # HybridMediaScaler Documentation
+
+    This guide covers setup, API usage, encoding configuration, and multilingual streaming setup.
+    Refer to individual files in the `docs/` folder for modular reference.
