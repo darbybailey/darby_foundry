@@ -2,7 +2,7 @@ repository:
   name: hybrid-media-scaler
   description: >
     HybridMediaScaler - A content delivery optimization system for video and audio
-    with multilingual support, adaptive bitrate, and global CDN simulation
+    with multilingual support, adaptive bitrate, and global CDN simulation.
   visibility: public
   license: MIT
   topics:
@@ -81,7 +81,6 @@ structure:
         - docs/encoding_guide.md
         - docs/multilingual_setup.md
         - docs/cdn_simulation.md
-        - docs/README.md  # auto-generated below
 
     - name: config
       description: Configuration files for project setup and deployment
@@ -112,32 +111,32 @@ features:
     description: Metrics tracking accuracy of automated translations and dubbing
 
 readme:
-  title: HybridMediaScaler
-  tagline: Multilingual Streaming with Global Optimization
+  title: "HybridMediaScaler"
+  tagline: "Multilingual Streaming with Global Optimization"
   sections:
-    - name: Overview
+    - name: "Overview"
       content: >
-        HybridMediaScaler optimizes multilingual video/audio delivery using FFmpeg, AI, and
-        simulated CDN infrastructure. It enables adaptive bitrate, multilingual sync,
-        and real-time analytics dashboards.
-    - name: Features
+        HybridMediaScaler optimizes multilingual video/audio delivery using FFmpeg, machine learning,
+        and simulated CDN infrastructure. It enables adaptive bitrate encoding, multilingual audio sync,
+        and real-time analytics dashboards for high-quality content distribution.
+    - name: "Features"
       content: |
-        - Adaptive encoding using TensorFlow predictions
-        - Real-time multilingual audio streaming
-        - Global CDN simulation with edge cache strategies
-        - Analytics with Prometheus and Grafana
-        - FastAPI backend for managing delivery and metrics
-    - name: Tech Stack
+        - Adaptive encoding with FFmpeg and TensorFlow  
+        - Real-time multilingual streaming with sync manager  
+        - Edge-cached CDN simulation for global delivery  
+        - Prometheus & Grafana dashboards for monitoring  
+        - FastAPI backend with RESTful analytics
+    - name: "Tech Stack"
       content: |
-        - Python (FastAPI, TensorFlow)
-        - FFmpeg
-        - Prometheus & Grafana
-        - Docker & Compose
-        - TypeScript & D3.js
-    - name: Getting Started
+        - **Python** (FastAPI, TensorFlow, FFmpeg)  
+        - **TypeScript** (Grafana, D3.js, Prometheus)  
+        - **Docker** & **Kubernetes-ready** configs  
+        - **Multilingual sync** & **edge caching**
+    - name: "Getting Started"
       content: |
-        1. Clone the repo
-        2. Run `docker-compose up`
-        3. Access dashboard at http://localhost:3000
-    - name: License
+        1. Clone the repo  
+        2. Copy `.env.example` to `.env` and set variables  
+        3. Run `docker-compose up --build`  
+        4. Access the dashboard at `http://localhost:3000`
+    - name: "License"
       content: MIT License — see LICENSE file for details
